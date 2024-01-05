@@ -24,7 +24,7 @@ indexes = [
 ]
 
 d = Dict{Vector{Int}, Float64}()
-for i in 1:length(cases)
+for i in eachindex(cases)
     arr = cases[i]
     idx = indexes[i]
     d[idx] = getindex(arr, idx...)
