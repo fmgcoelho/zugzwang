@@ -1,0 +1,7 @@
+We address the problem of extending probability from the total choices of an ASP program to the stable models, and from there to general events.
+%
+Our approach is algebraic in the sense that it relies on an equivalence relation over the set of events and uncertainty is expressed with variables and polynomial expressions.
+%
+We illustrate our methods with two examples, one of which shows a connection to bayesian networks.
+%
+Possible applications of the process described here include assigning a score to a logic program with respect to the empiric distribution of a given dataset, which in turn can be used by evolutionary algorithms searching for optimal models of that dataset.

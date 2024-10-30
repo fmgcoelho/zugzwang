@@ -1,0 +1,13 @@
+modifyLineBreaks:
+    preserveBlankLines: 1
+    condenseMultipleBlankLinesInto: 1
+    textWrapOptions:
+        columns: 78
+    # environments:
+    #     DBSStartsOnOwnLine: 1
+lookForAlignDelims:
+    tabular: 1
+    split: 1
+    equation*: 1
+    equation: 1
+    enumerate: 1

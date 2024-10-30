@@ -1,0 +1,172 @@
+MIME-Version: 1.0
+Date: Mon, 13 Mar 2023 10:09:44 +0000
+References: <CAFF0sxjxHC95MvqNO1f6XF4DvOWHSvW1miPGCYguBXf3_jY8-w@mail.gmail.com>
+	<CAECEPPr3C_+gqUbRfRgevS8GVGMJG03UO5hC65OifiE5KXsvdg@mail.gmail.com>
+In-Reply-To: <CAECEPPr3C_+gqUbRfRgevS8GVGMJG03UO5hC65OifiE5KXsvdg@mail.gmail.com>
+Message-ID: <CAFF0sxhDnfzsn5+Nrs97+s-sAd9R4tYkpCJw6Gu1qW6hAyQN8A@mail.gmail.com>
+Subject: Re: Tarefa 01
+From: Francisco Coelho <fc@uevora.pt>
+To: ALICE MARTINS <l52768@alunos.uevora.pt>
+Content-Type: multipart/alternative; boundary="00000000000071009e05f6c54f6f"
+
+--00000000000071009e05f6c54f6f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Tem aqui <https://www.bnlearn.com/bnrepository/> um reposit=C3=B3rio de red=
+es de
+bayes, nesses formatos.
+Pode testar a biblioteca fazendo experi=C3=AAncias com os exemplos do
+reposit=C3=B3rio.
+
+Quest=C3=B5es simples que pode tentar responder com a biblioteca:
+- quantos n=C3=B3s tem a rede?
+- quantos n=C3=B3s s=C3=A3o descendentes? quantos s=C3=A3o ascendentes?
+- qual =C3=A9 o n=C3=BAmero m=C3=A9dio de arestas "in"? e "out"?
+
+Um exerc=C3=ADcio com mais "f=C3=B4lego".
+O dot <https://en.wikipedia.org/wiki/DOT_%28graph_description_language%29>
+=C3=A9 um formato para descrever grafos, suportado em Python pelo pydot
+<https://pypi.org/project/pydot/> e usado pelo graphviz
+<https://www.graphviz.org/> para visualiza=C3=A7=C3=A3o.
+Por outro lado, networkx <https://networkx.org/> =C3=A9 uma biblioteca de
+an=C3=A1lise de grafos e redes.
+
+Passe uma rede lida com o bnlearn para o networkx e visualize-a com o
+graphviz passando pelo pydot.
+
+Entretanto, estamos interessados no Potassco <https://potassco.org/>. Pode
+instalar no seu sistema e consultar o guia respetivo
+<https://github.com/potassco/guide/releases/>.
+
+--
+Francisco Coelho
+Departamento de Inform=C3=A1tica, Universidade de =C3=89vora
+NOVA LINCS
+High Performance Computing Chair
+
+
+ALICE MARTINS <l52768@alunos.uevora.pt> escreveu no dia domingo, 12/03/2023
+=C3=A0(s) 20:18:
+
+> Ol=C3=A1 professor,
+> espero que se encontre bem.
+> Da minha pesquisa sobre este assunto, pude concluir que para realizarmos =
+a
+> leitura de redes Bayesianas de um ficheiro, precisamos de importar a
+> biblioteca bnlearn no python atrav=C3=A9s do comando:
+> *import bnlearn*
+>
+> Atrav=C3=A9s dessa biblioteca, podemos ler ficheiros atrav=C3=A9s dos com=
+andos:
+> *read.bif(), read.dsc(), read.net <http://read.net>()*
+>
+> Para al=C3=A9m de toda esta pesquisa, tamb=C3=A9m aprendi como programar =
+em Python.
+> Por favor, diga-me o que mais posso fazer para terminar esta tarefa.
+>
+> Atenciosamente,
+> Alice Martins
+>
+> Francisco Coelho <fc@uevora.pt> escreveu no dia ter=C3=A7a, 7/03/2023 =C3=
+=A0(s)
+> 11:07:
+>
+>> Ol=C3=A1 Alice,
+>>
+>> Aqui est=C3=A1: "Read a Bayesian Network from a file (`BIF`, `DSC`, `NET=
+`,
+>> `RDA`, `RDS`, ...)" em Python.
+>>
+>> Cumprimentos,
+>> --
+>> Francisco Coelho
+>> Departamento de Inform=C3=A1tica, Universidade de =C3=89vora
+>> NOVA LINCS
+>> High Performance Computing Chair
+>>
+>
+
+--00000000000071009e05f6c54f6f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-family:monospac=
+e">Tem <a href=3D"https://www.bnlearn.com/bnrepository/">aqui</a> um reposi=
+t=C3=B3rio de redes de bayes, nesses formatos.</div><div class=3D"gmail_def=
+ault" style=3D"font-family:monospace">Pode testar a biblioteca fazendo expe=
+ri=C3=AAncias com os exemplos do reposit=C3=B3rio.<br></div><div class=3D"g=
+mail_default" style=3D"font-family:monospace"><br></div><div class=3D"gmail=
+_default" style=3D"font-family:monospace">Quest=C3=B5es simples que pode te=
+ntar responder com a biblioteca:</div><div class=3D"gmail_default" style=3D=
+"font-family:monospace">- quantos n=C3=B3s tem a rede?</div><div class=3D"g=
+mail_default" style=3D"font-family:monospace">- quantos n=C3=B3s s=C3=A3o d=
+escendentes? quantos s=C3=A3o ascendentes?</div><div class=3D"gmail_default=
+" style=3D"font-family:monospace">- qual =C3=A9 o n=C3=BAmero m=C3=A9dio de=
+ arestas &quot;in&quot;? e &quot;out&quot;?</div><div class=3D"gmail_defaul=
+t" style=3D"font-family:monospace"><br></div><div class=3D"gmail_default" s=
+tyle=3D"font-family:monospace">Um exerc=C3=ADcio com mais &quot;f=C3=B4lego=
+&quot;.<br></div><div class=3D"gmail_default" style=3D"font-family:monospac=
+e">O <a href=3D"https://en.wikipedia.org/wiki/DOT_%28graph_description_lang=
+uage%29">dot</a> =C3=A9 um formato para descrever grafos, suportado em Pyth=
+on pelo <a href=3D"https://pypi.org/project/pydot/">pydot</a> e usado pelo =
+<a href=3D"https://www.graphviz.org/">graphviz</a> para visualiza=C3=A7=C3=
+=A3o.</div><div class=3D"gmail_default" style=3D"font-family:monospace">Por=
+ outro lado, <a href=3D"https://networkx.org/">networkx</a> =C3=A9 uma bibl=
+ioteca de an=C3=A1lise de grafos e redes.</div><div class=3D"gmail_default"=
+ style=3D"font-family:monospace"><br></div><div class=3D"gmail_default" sty=
+le=3D"font-family:monospace">Passe uma rede lida com o bnlearn para o netwo=
+rkx e visualize-a com o graphviz passando pelo pydot.</div><div class=3D"gm=
+ail_default" style=3D"font-family:monospace"><br></div><div class=3D"gmail_=
+default" style=3D"font-family:monospace">Entretanto, estamos interessados n=
+o <a href=3D"https://potassco.org/">Potassco</a>. Pode instalar no seu sist=
+ema e consultar <a href=3D"https://github.com/potassco/guide/releases/">o g=
+uia respetivo</a>.<br></div><div class=3D"gmail_default" style=3D"font-fami=
+ly:monospace"><br clear=3D"all"></div><div><div dir=3D"ltr" class=3D"gmail_=
+signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><font f=
+ace=3D"monospace"></font></div><div><font face=3D"monospace">--</font></div=
+><div><font face=3D"monospace">Francisco Coelho</font></div><div><span styl=
+e=3D"font-family:monospace">Departamento de Inform=C3=A1tica,=C2=A0</span><=
+span style=3D"font-family:monospace">Universidade de =C3=89vora</span><span=
+ style=3D"font-family:monospace"><br></span><div><span style=3D"font-family=
+:monospace">NOVA LINCS</span></div></div><div><span style=3D"font-family:mo=
+nospace">High Performance Computing Chair</span></div></div></div></div><br=
+></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr"=
+>ALICE MARTINS &lt;<a href=3D"mailto:l52768@alunos.uevora.pt">l52768@alunos=
+.uevora.pt</a>&gt; escreveu no dia domingo, 12/03/2023 =C3=A0(s) 20:18:<br>=
+</div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;b=
+order-left:1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr"><d=
+iv>Ol=C3=A1 professor,</div><div>espero que se encontre bem.</div><div>Da m=
+inha pesquisa sobre este assunto, pude concluir que para realizarmos a leit=
+ura de redes Bayesianas de um ficheiro, precisamos de importar a biblioteca=
+ bnlearn no python atrav=C3=A9s do comando:</div><div><b>import bnlearn</b>=
+</div><div><br></div><div>Atrav=C3=A9s dessa biblioteca, podemos ler fichei=
+ros atrav=C3=A9s dos comandos:</div><div><b>read.bif(), read.dsc(), <a href=
+=3D"http://read.net" target=3D"_blank">read.net</a>()</b></div><div><br></d=
+iv><div>Para al=C3=A9m de toda esta pesquisa, tamb=C3=A9m aprendi como prog=
+ramar em Python. <br></div><div>Por favor, diga-me o que mais posso fazer p=
+ara terminar esta tarefa.</div><div><br></div><div>Atenciosamente,</div><di=
+v>Alice Martins<b><br></b></div></div><br><div class=3D"gmail_quote"><div d=
+ir=3D"ltr" class=3D"gmail_attr">Francisco Coelho &lt;<a href=3D"mailto:fc@u=
+evora.pt" target=3D"_blank">fc@uevora.pt</a>&gt; escreveu no dia ter=C3=A7a=
+, 7/03/2023 =C3=A0(s) 11:07:<br></div><blockquote class=3D"gmail_quote" sty=
+le=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);paddi=
+ng-left:1ex"><div dir=3D"ltr"><div class=3D"gmail_default" style=3D"font-fa=
+mily:monospace">Ol=C3=A1 Alice,</div><div class=3D"gmail_default" style=3D"=
+font-family:monospace"><br></div><div class=3D"gmail_default" style=3D"font=
+-family:monospace">Aqui est=C3=A1: &quot;Read a Bayesian Network from a fil=
+e (`BIF`, `DSC`, `NET`, `RDA`, `RDS`, ...)&quot; em Python.</div><div class=
+=3D"gmail_default" style=3D"font-family:monospace"><br></div><div class=3D"=
+gmail_default" style=3D"font-family:monospace">Cumprimentos,<br></div><div>=
+<div dir=3D"ltr"><div dir=3D"ltr"><div><font face=3D"monospace"></font></di=
+v><div><font face=3D"monospace">--</font></div><div><font face=3D"monospace=
+">Francisco Coelho</font></div><div><span style=3D"font-family:monospace">D=
+epartamento de Inform=C3=A1tica,=C2=A0</span><span style=3D"font-family:mon=
+ospace">Universidade de =C3=89vora</span><span style=3D"font-family:monospa=
+ce"><br></span><div><span style=3D"font-family:monospace">NOVA LINCS</span>=
+</div></div><div><span style=3D"font-family:monospace">High Performance Com=
+puting Chair</span></div></div></div></div></div>
+</blockquote></div>
+</blockquote></div>
+
+--00000000000071009e05f6c54f6f--

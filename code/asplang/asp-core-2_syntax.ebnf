@@ -1,0 +1,54 @@
+Id              ::= [a-z] [A-Za-z0-9_]*
+Variable        ::= [A-Z] [A-Za-z0-9_]*
+StringConstant  ::= \"([^\"] | \\\")\"
+SymbolicConstant    ::= [a-z] [A-Za-z0-9_]*
+AnonymousVariable   ::= "_"
+Number          ::= 0 | [1-9][0-9]*
+VariableTerm    ::= Variable | AnonymousVariable
+GroundTerm      ::= SymbolicConstant | StringConstant | "-"? Number
+BasicTerm       ::= GroundTerm | VariableTerm
+BasicTerms      ::= BasicTerm ("," BasicTerm)*
+ArithOp         ::= "+" | "-" | "*" | "/"
+
+Term            ::= Id ("(" Terms? ")")?
+                    | Number  
+                    | StringConstant
+                    | Variable
+                    | AnonymousVariable
+                    | "(" Term ")"
+                    | "-" Term
+                    | Term ArithOp Term
+Terms           ::= Term ("," Term)*
+
+BinOp           ::= "<" | "<=" | "=" | "!=" | ">" | ">="
+
+BuiltinAtom     ::= Term BinOp Term
+ClassicalLiteral    ::= "-"? SymbolicConstant ("(" Terms? ")")? 
+
+NafLiteral      ::= "not"? ClassicalLiteral | BuiltinAtom
+NafLiterals     ::= NafLiteral ("," NafLiteral)*
+
+WeightAtLevel   ::= Term ("@" Term)? ("," Terms)?
+
+AggregateFunction   ::= "#count" | "#sum" | "#max" | "#min"
+AggregateElement    ::= BasicTerms? (":" NafLiterals?)?
+AggregateElements   ::= AggregateElement (";" AggregateElement)*
+Aggregate       ::= (Term BinOp)? AggregateFunction "{" AggregateElements? "}" (BinOp Term)?    
+
+ChoiceElement   ::= ClassicalLiteral (":" NafLiterals?)?
+ChoiceElements  ::= ChoiceElement (";" ChoiceElement)*
+Choice          ::= (Term BinOp)? "{" ChoiceElements? "}" (BinOp Term)?
+
+Disjunction     ::= ClassicalLiteral ("|" ClassicalLiteral)* 
+
+Body            ::= (Body ",")? (NafLiteral | "not"? Aggregate)
+Head            ::= Disjunction | Choice
+
+Statement       ::= ":-" Body? "."
+                    | Head (":-" Body?)? "."
+                    | ":~" Body? "." "[" WeightAtLevel "]"
+
+Query           ::= ClassicalAtom "?"
+Statements      ::= Statement+
+
+Program         ::= Statements? Query?

@@ -1,0 +1,630 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{alberti2017cplint}{article}{}
+      \name{author}{5}{}{%
+        {{hash=420ee49754fe95c6d208688e7247258e}{%
+           family={Alberti},
+           familyi={A\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod}}}%
+        {{hash=570b8db51137612de4b521d111b0a6db}{%
+           family={Bellodi},
+           familyi={B\bibinitperiod},
+           given={Elena},
+           giveni={E\bibinitperiod}}}%
+        {{hash=a665bb73651fa0ccb4219c71c149c9a8}{%
+           family={Cota},
+           familyi={C\bibinitperiod},
+           given={Giuseppe},
+           giveni={G\bibinitperiod}}}%
+        {{hash=c9fda578750553b567123a1a98d033e1}{%
+           family={Riguzzi},
+           familyi={R\bibinitperiod},
+           given={Fabrizio},
+           giveni={F\bibinitperiod}}}%
+        {{hash=9388261b045f4464361f4e968dfea5ff}{%
+           family={Zese},
+           familyi={Z\bibinitperiod},
+           given={Riccardo},
+           giveni={R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IOS Press}%
+      }
+      \strng{namehash}{74186015c534a57a69aa112a80ae3302}
+      \strng{fullhash}{4ba680a569a783a4dde15ecca9ca96e6}
+      \strng{bibnamehash}{74186015c534a57a69aa112a80ae3302}
+      \strng{authorbibnamehash}{74186015c534a57a69aa112a80ae3302}
+      \strng{authornamehash}{74186015c534a57a69aa112a80ae3302}
+      \strng{authorfullhash}{4ba680a569a783a4dde15ecca9ca96e6}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Intelligenza Artificiale}
+      \field{number}{1}
+      \field{title}{cplint on SWISH: Probabilistic logical inference with a web browser}
+      \field{volume}{11}
+      \field{year}{2017}
+      \field{pages}{47\bibrangedash 64}
+      \range{pages}{18}
+    \endentry
+    \entry{baral2009probabilistic}{article}{}
+      \name{author}{3}{}{%
+        {{hash=121708a74e1528d506fc79a1638d9e8f}{%
+           family={Baral},
+           familyi={B\bibinitperiod},
+           given={Chitta},
+           giveni={C\bibinitperiod}}}%
+        {{hash=9ddf8a4d782a7a6f34c25fbc4ca822b1}{%
+           family={Gelfond},
+           familyi={G\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod}}}%
+        {{hash=226d456b40a5f6c60de5e19d2193b47e}{%
+           family={Rushton},
+           familyi={R\bibinitperiod},
+           given={Nelson},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \strng{fullhash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \strng{bibnamehash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \strng{authorbibnamehash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \strng{authornamehash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \strng{authorfullhash}{c73d1fd137b81e7fc22dd2904e1c016a}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theory and Practice of Logic Programming}
+      \field{number}{1}
+      \field{title}{Probabilistic reasoning with {A}nswer {S}ets}
+      \field{volume}{9}
+      \field{year}{2009}
+      \field{pages}{57\bibrangedash 144}
+      \range{pages}{88}
+    \endentry
+    \entry{bezanson2017julia}{article}{}
+      \name{author}{4}{}{%
+        {{hash=17e68031e06f57a7e83caeb4e0aed827}{%
+           family={Bezanson},
+           familyi={B\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod}}}%
+        {{hash=01a6ca61fcd12a3a071ec49304df57f8}{%
+           family={Edelman},
+           familyi={E\bibinitperiod},
+           given={Alan},
+           giveni={A\bibinitperiod}}}%
+        {{hash=bca7c93f55e669f71c4ff95e68ac9538}{%
+           family={Karpinski},
+           familyi={K\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+        {{hash=de802ff42d9c902868c57a332dbac5e0}{%
+           family={Shah},
+           familyi={S\bibinitperiod},
+           given={Viral\bibnamedelima B.},
+           giveni={V\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \strng{namehash}{07e3452af3652a626dc1d02355fda942}
+      \strng{fullhash}{651af5e2dc744eabe31cd448eb05d640}
+      \strng{bibnamehash}{07e3452af3652a626dc1d02355fda942}
+      \strng{authorbibnamehash}{07e3452af3652a626dc1d02355fda942}
+      \strng{authornamehash}{07e3452af3652a626dc1d02355fda942}
+      \strng{authorfullhash}{651af5e2dc744eabe31cd448eb05d640}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{SIAM Review}
+      \field{number}{1}
+      \field{title}{Julia: A Fresh Approach to Numerical Computing}
+      \field{volume}{59}
+      \field{year}{2017}
+      \field{pages}{65\bibrangedash 98}
+      \range{pages}{34}
+      \verb{doi}
+      \verb 10.1137/141000671
+      \endverb
+    \endentry
+    \entry{cozman2020joy}{article}{}
+      \name{author}{2}{}{%
+        {{hash=fc6c72d4def6fbfbe5a2c3d671938b46}{%
+           family={Cozman},
+           familyi={C\bibinitperiod},
+           given={Fabio\bibnamedelima Gagliardi},
+           giveni={F\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=14938e120399ce7e11d1146ac161a8d2}{%
+           family={Mauá},
+           familyi={M\bibinitperiod},
+           given={Denis\bibnamedelima Deratani},
+           giveni={D\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \strng{fullhash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \strng{bibnamehash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \strng{authorbibnamehash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \strng{authornamehash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \strng{authorfullhash}{3bdbf804d2f1ae538b29c14ef2776e07}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal of Approximate Reasoning}
+      \field{title}{The joy of probabilistic answer set programming: semantics, complexity, expressivity, inference}
+      \field{volume}{125}
+      \field{year}{2020}
+      \field{pages}{218\bibrangedash 239}
+      \range{pages}{22}
+    \endentry
+    \entry{de2007problog}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=d71ef24842e2fd1df4b1989ff0d24ff9}{%
+           family={De\bibnamedelima Raedt},
+           familyi={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Luc},
+           giveni={L\bibinitperiod}}}%
+        {{hash=001a3d77c753e9bd2c2f5e6c5635b572}{%
+           family={Kimmig},
+           familyi={K\bibinitperiod},
+           given={Angelika},
+           giveni={A\bibinitperiod}}}%
+        {{hash=6f6200005b70c14db424245927d50f09}{%
+           family={Toivonen},
+           familyi={T\bibinitperiod},
+           given={Hannu},
+           giveni={H\bibinitperiod}}}%
+        {{hash=b0058ea388891753a0ac1307a4b6baae}{%
+           family={Veloso},
+           familyi={V\bibinitperiod},
+           given={M},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {IJCAI-INT JOINT CONF ARTIF INTELL}%
+      }
+      \strng{namehash}{fd4c47a1998c1936a4514e2ca25667cd}
+      \strng{fullhash}{c1c68d717878eedbdbab818dd8e22ffe}
+      \strng{bibnamehash}{fd4c47a1998c1936a4514e2ca25667cd}
+      \strng{authorbibnamehash}{fd4c47a1998c1936a4514e2ca25667cd}
+      \strng{authornamehash}{fd4c47a1998c1936a4514e2ca25667cd}
+      \strng{authorfullhash}{c1c68d717878eedbdbab818dd8e22ffe}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{IJCAI 2007, Proceedings of the 20th international joint conference on artificial intelligence}
+      \field{title}{ProbLog: A probabilistic {P}rolog and its application in link discovery}
+      \field{year}{2007}
+      \field{pages}{2462\bibrangedash 2467}
+      \range{pages}{6}
+    \endentry
+    \entry{geman84}{article}{}
+      \name{author}{2}{}{%
+        {{hash=559187c6e8cad5a03e2e2c57be738be0}{%
+           family={Geman},
+           familyi={G\bibinitperiod},
+           given={Stuart},
+           giveni={S\bibinitperiod}}}%
+        {{hash=89e4edfb9032a01b35790030deb29681}{%
+           family={Geman},
+           familyi={G\bibinitperiod},
+           given={Donald},
+           giveni={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \strng{fullhash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \strng{bibnamehash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \strng{authorbibnamehash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \strng{authornamehash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \strng{authorfullhash}{0bb8b7eb2aae2428a08d94af9285141d}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Pattern Analysis and Machine Intelligence}
+      \field{number}{6}
+      \field{title}{Stochastic Relaxation, Gibbs Distributions, and the Bayesian Restoration of Images}
+      \field{volume}{PAMI-6}
+      \field{year}{1984}
+      \field{pages}{721\bibrangedash 741}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1109/TPAMI.1984.4767596
+      \endverb
+    \endentry
+    \entry{gowda2021high}{article}{}
+      \name{author}{7}{}{%
+        {{hash=741b18d2576ad0cdd23998a5cf6d05e5}{%
+           family={Gowda},
+           familyi={G\bibinitperiod},
+           given={Shashi},
+           giveni={S\bibinitperiod}}}%
+        {{hash=20505ba2d4ff3726270435a325081550}{%
+           family={Ma},
+           familyi={M\bibinitperiod},
+           given={Yingbo},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=61098ee435f5a99220266c3fdf173fcc}{%
+           family={Cheli},
+           familyi={C\bibinitperiod},
+           given={Alessandro},
+           giveni={A\bibinitperiod}}}%
+        {{hash=c8cd67bdc3b6cca3233dbde53bf34ea3}{%
+           family={Gwozdz},
+           familyi={G\bibinitperiod},
+           given={Maja},
+           giveni={M\bibinitperiod}}}%
+        {{hash=de802ff42d9c902868c57a332dbac5e0}{%
+           family={Shah},
+           familyi={S\bibinitperiod},
+           given={Viral\bibnamedelima B},
+           giveni={V\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=01a6ca61fcd12a3a071ec49304df57f8}{%
+           family={Edelman},
+           familyi={E\bibinitperiod},
+           given={Alan},
+           giveni={A\bibinitperiod}}}%
+        {{hash=c454e867cc51042dbb2c4a284006599f}{%
+           family={Rackauckas},
+           familyi={R\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{b23ac0f69148f89116e649eaf2519acd}
+      \strng{fullhash}{27df3e61bf8ca739546ab7156322c8e8}
+      \strng{bibnamehash}{b23ac0f69148f89116e649eaf2519acd}
+      \strng{authorbibnamehash}{b23ac0f69148f89116e649eaf2519acd}
+      \strng{authornamehash}{b23ac0f69148f89116e649eaf2519acd}
+      \strng{authorfullhash}{27df3e61bf8ca739546ab7156322c8e8}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2105.03949}
+      \field{title}{High-performance symbolic-numerics via multiple dispatch}
+      \field{year}{2021}
+    \endentry
+    \entry{kindermann80}{book}{}
+      \name{author}{2}{}{%
+        {{hash=236638ffd8d29e6e07c3dd1a50a49945}{%
+           family={Kindermann},
+           familyi={K\bibinitperiod},
+           given={Ross},
+           giveni={R\bibinitperiod}}}%
+        {{hash=f64ddf8ee9b19fd9b8ea3426d553f892}{%
+           family={Snell},
+           familyi={S\bibinitperiod},
+           given={J.\bibnamedelimi Laurie},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {American Mathematical Society, Providence, RI}%
+      }
+      \strng{namehash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \strng{fullhash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \strng{bibnamehash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \strng{authorbibnamehash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \strng{authornamehash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \strng{authorfullhash}{4c4f20bebd8ab7d22ac7d784bca069f0}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{0-8218-5001-6}
+      \field{series}{Contemporary Mathematics}
+      \field{title}{Markov random fields and their applications}
+      \field{volume}{1}
+      \field{year}{1980}
+      \field{pages}{ix+142}
+      \range{pages}{-1}
+    \endentry
+    \entry{lee2016weighted}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=61a8c8f9bc9bd96451ef58478d081e18}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Joohyung},
+           giveni={J\bibinitperiod}}}%
+        {{hash=141a1e7404c5b53546fb09821c56717a}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Yi},
+           giveni={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{297edc207a06c063f4094db6c2e1cafa}
+      \strng{fullhash}{297edc207a06c063f4094db6c2e1cafa}
+      \strng{bibnamehash}{297edc207a06c063f4094db6c2e1cafa}
+      \strng{authorbibnamehash}{297edc207a06c063f4094db6c2e1cafa}
+      \strng{authornamehash}{297edc207a06c063f4094db6c2e1cafa}
+      \strng{authorfullhash}{297edc207a06c063f4094db6c2e1cafa}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Fifteenth international conference on the principles of knowledge representation and reasoning}
+      \field{title}{Weighted rules under the stable model semantics}
+      \field{year}{2016}
+    \endentry
+    \entry{lee2017lpmln}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=61a8c8f9bc9bd96451ef58478d081e18}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Joohyung},
+           giveni={J\bibinitperiod}}}%
+        {{hash=6ab968a3bc197de2f520d896d74f2b49}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Zhun},
+           giveni={Z\bibinitperiod}}}%
+      }
+      \strng{namehash}{5b4312bfbf008577c042c0c777e9418b}
+      \strng{fullhash}{5b4312bfbf008577c042c0c777e9418b}
+      \strng{bibnamehash}{5b4312bfbf008577c042c0c777e9418b}
+      \strng{authorbibnamehash}{5b4312bfbf008577c042c0c777e9418b}
+      \strng{authornamehash}{5b4312bfbf008577c042c0c777e9418b}
+      \strng{authorfullhash}{5b4312bfbf008577c042c0c777e9418b}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{number}{1}
+      \field{title}{LPMLN, {W}eak {C}onstraints, and {P}-log}
+      \field{volume}{31}
+      \field{year}{2017}
+    \endentry
+    \entry{lifschitz2002answer}{article}{}
+      \name{author}{1}{}{%
+        {{hash=3f9f7c9937297077325233d345cf9c91}{%
+           family={Lifschitz},
+           familyi={L\bibinitperiod},
+           given={Vladimir},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{fullhash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{bibnamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authorbibnamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authornamehash}{3f9f7c9937297077325233d345cf9c91}
+      \strng{authorfullhash}{3f9f7c9937297077325233d345cf9c91}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{The idea of answer set programming is to represent a given computational problem by a logic program whose answer sets correspond to solutions, and then use an answer set solver, such as smodels or dlv, to find an answer set for this program. Applications of this method to planning are related to the line of research on the frame problem that started with the invention of formal nonmonotonic reasoning in 1980.}
+      \field{issn}{0004-3702}
+      \field{journaltitle}{Artificial Intelligence}
+      \field{number}{1}
+      \field{title}{Answer set programming and plan generation}
+      \field{volume}{138}
+      \field{year}{2002}
+      \field{pages}{39\bibrangedash 54}
+      \range{pages}{16}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S0004-3702(02)00186-8
+      \endverb
+      \keyw{Answer sets,Default logic,Frame problem,Logic programming,Planning}
+    \endentry
+    \entry{pajunen2021solution}{article}{}
+      \name{author}{2}{}{%
+        {{hash=b9dbf77bca7bb2316094f219c5fab948}{%
+           family={Pajunen},
+           familyi={P\bibinitperiod},
+           given={Jukka},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ed6a24604d923493e91425fbb35ac736}{%
+           family={Janhunen},
+           familyi={J\bibinitperiod},
+           given={Tomi},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{05d4322df8419b717402d541a38709eb}
+      \strng{fullhash}{05d4322df8419b717402d541a38709eb}
+      \strng{bibnamehash}{05d4322df8419b717402d541a38709eb}
+      \strng{authorbibnamehash}{05d4322df8419b717402d541a38709eb}
+      \strng{authornamehash}{05d4322df8419b717402d541a38709eb}
+      \strng{authorfullhash}{05d4322df8419b717402d541a38709eb}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Theory and Practice of Logic Programming}
+      \field{number}{6}
+      \field{title}{Solution enumeration by optimality in {A}nswer {S}et {P}rogramming}
+      \field{volume}{21}
+      \field{year}{2021}
+      \field{pages}{750\bibrangedash 767}
+      \range{pages}{18}
+    \endentry
+    \entry{riguzzi2022foundations}{book}{}
+      \name{author}{1}{}{%
+        {{hash=c9fda578750553b567123a1a98d033e1}{%
+           family={Riguzzi},
+           familyi={R\bibinitperiod},
+           given={Fabrizio},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {River Publishers}%
+      }
+      \strng{namehash}{c9fda578750553b567123a1a98d033e1}
+      \strng{fullhash}{c9fda578750553b567123a1a98d033e1}
+      \strng{bibnamehash}{c9fda578750553b567123a1a98d033e1}
+      \strng{authorbibnamehash}{c9fda578750553b567123a1a98d033e1}
+      \strng{authornamehash}{c9fda578750553b567123a1a98d033e1}
+      \strng{authorfullhash}{c9fda578750553b567123a1a98d033e1}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{shorttitle}
+      \field{edition}{1}
+      \field{isbn}{978-1-00-333819-2}
+      \field{month}{9}
+      \field{shorttitle}{Foundations of {Probabilistic} {Logic} {Programming}}
+      \field{title}{Foundations of {Probabilistic} {Logic} {Programming}: {Languages}, {Semantics}, {Inference} and {Learning}}
+      \field{urlday}{1}
+      \field{urlmonth}{3}
+      \field{urlyear}{2023}
+      \field{year}{2022}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.1201/9781003338192
+      \endverb
+    \endentry
+    \entry{sato1995statistical}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{hash=1a99e9f5aaf14b0a1e707546a6a0763b}{%
+           family={Sato},
+           familyi={S\bibinitperiod},
+           given={Taisuke},
+           giveni={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \strng{fullhash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \strng{bibnamehash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \strng{authorbibnamehash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \strng{authornamehash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \strng{authorfullhash}{1a99e9f5aaf14b0a1e707546a6a0763b}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{International Conference on Logic Programming}
+      \field{title}{A Statistical Learning Method for Logic Programs with Distribution Semantics}
+      \field{year}{1995}
+    \endentry
+    \entry{Teugels90}{article}{}
+      \name{author}{1}{}{%
+        {{hash=539b0f1701400c2cc7af5677bcefda55}{%
+           family={Teugels},
+           familyi={T\bibinitperiod},
+           given={Jozef\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \strng{namehash}{539b0f1701400c2cc7af5677bcefda55}
+      \strng{fullhash}{539b0f1701400c2cc7af5677bcefda55}
+      \strng{bibnamehash}{539b0f1701400c2cc7af5677bcefda55}
+      \strng{authorbibnamehash}{539b0f1701400c2cc7af5677bcefda55}
+      \strng{authornamehash}{539b0f1701400c2cc7af5677bcefda55}
+      \strng{authorfullhash}{539b0f1701400c2cc7af5677bcefda55}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{0047-259X,1095-7243}
+      \field{journaltitle}{J. Multivariate Anal.}
+      \field{number}{2}
+      \field{title}{Some representations of the multivariate {B}ernoulli and binomial distributions}
+      \field{volume}{32}
+      \field{year}{1990}
+      \field{pages}{256\bibrangedash 268}
+      \range{pages}{13}
+      \verb{doi}
+      \verb 10.1016/0047-259X(90)90084-U
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1016/0047-259X(90)90084-U
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1016/0047-259X(90)90084-U
+      \endverb
+    \endentry
+    \entry{verreet2022inference}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{hash=8c3cb156a38a05a0db007c3f70046969}{%
+           family={Verreet},
+           familyi={V\bibinitperiod},
+           given={Victor},
+           giveni={V\bibinitperiod}}}%
+        {{hash=2d3a05a3112c435b10b713e93f6f4d98}{%
+           family={Derkinderen},
+           familyi={D\bibinitperiod},
+           given={Vincent},
+           giveni={V\bibinitperiod}}}%
+        {{hash=4cae65aea3ad7a008ab76f69287bc6fe}{%
+           family={Dos\bibnamedelima Martires},
+           familyi={D\bibinitperiod\bibinitdelim M\bibinitperiod},
+           given={Pedro\bibnamedelima Zuidberg},
+           giveni={P\bibinitperiod\bibinitdelim Z\bibinitperiod}}}%
+        {{hash=d71ef24842e2fd1df4b1989ff0d24ff9}{%
+           family={De\bibnamedelima Raedt},
+           familyi={D\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Luc},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{c8e5be2a89a704b979234d53774a7b44}
+      \strng{fullhash}{9599a2aa920192263bed75189f93da65}
+      \strng{bibnamehash}{c8e5be2a89a704b979234d53774a7b44}
+      \strng{authorbibnamehash}{c8e5be2a89a704b979234d53774a7b44}
+      \strng{authornamehash}{c8e5be2a89a704b979234d53774a7b44}
+      \strng{authorfullhash}{9599a2aa920192263bed75189f93da65}
+      \field{sortinit}{V}
+      \field{sortinithash}{afb52128e5b4dc4b843768c0113d673b}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the AAAI Conference on Artificial Intelligence}
+      \field{title}{Inference and learning with model uncertainty in probabilistic logic programs}
+      \field{volume}{36}
+      \field{year}{2022}
+      \field{pages}{10060\bibrangedash 10069}
+      \range{pages}{10}
+    \endentry
+  \enddatalist
+  \missing{adrian2018asp}
+  \missing{arias2020justifications}
+  \missing{fierens2015inference}
+  \missing{gebser2011potassco}
+  \missing{gebser2022answer}
+  \missing{gelfond1988stable}
+  \missing{judea88probabilistic}
+  \missing{kiessling1992database}
+  \missing{kifer1992theory}
+  \missing{lifschitz2008twelve}
+  \missing{marple2017computing}
+  \missing{niemela1997smodels}
+  \missing{raedt2016statistical}
+  \missing{richardson2006markov}
+  \missing{riguzzi2013well}
+  \missing{thone1997increased}
+  \missing{van1991well}
+\endrefsection
+\endinput
+

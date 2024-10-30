@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../students/amartins/tarefas"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"clingo",
+			"findreplace",
+			"outf",
+			"println",
+			"SASP",
+			"smodels"
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "julia",
+				"request": "launch",
+				"name": "Run active Julia file",
+				"program": "${file}",
+				"stopOnEntry": false,
+				"cwd": "${workspaceFolder}",
+				"juliaEnv": "${command:activeJuliaEnvironment}"
+			}
+		]
+	}
+}

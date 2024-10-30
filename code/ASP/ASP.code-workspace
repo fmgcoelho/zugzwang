@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../SASP"
+		}
+	],
+	"settings": {
+		"julia.environmentPath": "/home/fc/sci/projetos/zugzwang/code/ASP"
+	}
+}

@@ -1,0 +1,323 @@
+\documentclass[bigger]{beamer}
+\useinnertheme{circles}
+\usefonttheme[onlymath]{serif}
+\usefonttheme{structurebold}
+\setbeamertemplate{navigation symbols}{}
+\usepackage{xcolor}
+\setbeamercolor{highlight block}{bg=gray}
+
+\usepackage{tikz}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[normalem]{ulem} % To strikeout
+\usepackage{commath}
+
+\newcommand{\naf}{\ensuremath{\sim\!\!}}
+
+\title{Probabilistic Answer Set Programming}
+\subtitle{A Research Draft}
+\author{Francisco Coelho}
+\institute[\texttt{fc@uevora.pt}]{
+    NOVA LINCS \&\\
+    High Performance Computing Chair \&\\
+    Departamento de Informática, Universidade de Évora
+}
+
+\begin{document}
+    \begin{frame}[plain]
+        \titlepage
+    \end{frame}
+    
+    \section*{Motivation}
+
+    \begin{frame}
+        \frametitle{In short\ldots\hfill\small \ldots a word wall. I'm sorry.}
+    
+        \begin{itemize}
+            \item \textbf{Machine Learning} has important limitations:
+            \begin{itemize}
+                \item The \emph{one table, conditionally independent rows} assumption.
+                \item \emph{Background knowledge} is hard to include.
+                \item \emph{Training} requires ``large'' amounts of data.
+                \item \emph{Models} are hard do interpret.
+            \end{itemize}
+            \item \textbf{Inductive Logic Programming} is based on first order logic --- solves all the problems above but is sensible to \emph{noise}.
+            \item \textbf{Distribution Semantics} defines the probability of a proposition from  probabilities of the (marginally independent) facts.
+            \item \textbf{Answer Set Programs} resets the common syntax and semantic of logic programs;  A ``program'' defines \emph{stable models}, not a computation neither a variable substitution.  
+        \end{itemize}    
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{\xout{Goals} Wish list}
+
+        \begin{block}{Extend distribution semantics to answer sets}
+            \begin{itemize}
+                \item Within a theoretical framework.
+                \item Computationally applicable to ``real world'' scenarios.
+                \item Easy to include background knowledge.
+                \item Perform common tasks such as \emph{marg, mle, map, etc.}
+                \item Learn program ``parameters'' and ``structure'' from \emph{noisy samples} --- possibly using \emph{templates}.
+                \item Related to Bayesian Networks, HMMs, \emph{etc.}  
+            \end{itemize}    
+            
+        \end{block}
+    \end{frame}
+    
+    \section{Development}
+    
+    \begin{frame}
+        \tableofcontents[currentsection]
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{The seed on an idea}
+        We want to define the \textbf{joint distribution} of the stable models.
+        \begin{enumerate} 
+            \item A \textbf{boolean random variable} can be described by a disjunction $a; \neg a$.
+            \item This ASP program has two stable models: $a$ and $\neg a$.
+            \item A program with $n$ such facts $a_i; \neg a_i$ has $2^n$ stable models, the distinct combinations of those choices. 
+            \item \textbf{If each $a_i$ has probability $p_i$ then the probability of a stable model $W$ would be} $$P(W) = \prod_{a_i \in W}p_i \prod_{\neg a_i \in W} (1 - p_i).$$            
+        \end{enumerate}        
+        \pause
+        \begin{alertblock}{But this is wrong.}
+            Even assuming that those facts are marginally independent --- which we will do.
+        \end{alertblock}
+    \end{frame}
+
+    \begin{frame}{Problem 1: Disjuntive Clauses}
+        The ASP program with probabilistic facts
+        $$        
+        \begin{aligned}
+            &b \vee \neg b\\
+            &h_1 \vee h_2 \leftarrow b
+        \end{aligned}
+        $$
+        has \textbf{three} stable models: $\set{\neg b}, \set{b, h_1}$ and $\set{b, h_2}$.  
+
+        \begin{block}{How to assign a probability to each model?}
+            \pause 
+            Possible approaches:
+            \begin{enumerate}
+                \item Pre-assign a \textbf{conditional distribution of the head}:
+                $$P(h_1, h_2 | b).$$
+                \item Bayesian learn from \textbf{observations}:
+                $$P(h_1, h_2 | b,z) \propto P(b, z | h_1, h_2) P(h_1, h_2).$$
+                \item Start with the former as \textbf{prior} and \textbf{update} with the latter.
+            \end{enumerate}     
+        \end{block}       
+    
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Questions to address}
+    
+        \begin{itemize}
+            \item How to \textbf{match} an observation $z$ with a clause case $h,b$?
+            \item How do observations \textbf{update} the probabilities?
+            \item Why match observations with clauses and \textbf{not with stable models}?
+            \item Is this just \textbf{bayesian networking}?
+            \item How to frame this in a \textbf{sound theoretic setting}?
+            \item Is this enough to compute the \textbf{joint distribution of the atoms}?
+        \end{itemize}
+        \onslide<2->
+        \begin{exampleblock}{Counters}
+            Instead of setting and updating probabilities, we associate \textbf{counters} to disjunctive clauses and their cases.
+        \end{exampleblock}
+    
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Bayesian updates: Matching observations}
+
+        \begin{itemize}
+            \item An \alert{observation} is a subset of the literals from a program\footnote{The set of atoms, $a$, of the program and their classic negations, $\neg a$.}.
+            \item A \alert{consistent} observation has no subset $\set{p, \neg p}$.
+            \item A \textbf{consistent} observation $z$ is \alert{relevant} for the clause $h \leftarrow b$ if $b \subseteq z$.
+            \item A disjunctive clause $$h_1 \vee \cdots \vee h_n \leftarrow b_1 \wedge \cdots \wedge b_m$$ has $n$ \alert{cases}: $\set{h_i, b_1, \ldots, b_m}, i = 1:n$.
+            \item The \textbf{consistent} observation $z$ \alert{matches} the case $\set{h, b_\ast}$ if 
+            $\set{h, b_\ast} \subseteq z$.     
+        \end{itemize}
+        The above definitions also apply to \textbf{facts} \emph{i.e.} clauses with an empty body and \textbf{constraints} \emph{i.e.} clauses with no head.
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Bayesian updates: Clauses Update}
+        A consistent observation \textbf{relevant} for a clause $h_1 \vee \cdots \vee h_n \leftarrow b$ should:
+            \begin{itemize}
+                \item Increase the \emph{probability of any matched case}.
+                \item Decrease the \emph{probability of any unmatched case}.
+            \end{itemize}
+        \pause
+        \begin{block}{Update algorithm}
+            \begin{enumerate}
+                \item Associate three \textbf{counters}, $r, u, n$, to each clause $h \leftarrow b$.
+                \item Associate a \textbf{counter}, $m_i$, to each case $h_i, b$ of each clause.
+                \item \textbf{Initial} values result from \emph{prior} knowledge.
+                \item Each \emph{consistent} observation \textbf{increments}:
+                \begin{itemize}
+                    \item The $r$ counters of \alert{r}elevant clauses.
+                    \item The $u$ counters of \alert{u}nmatched relevant clauses. 
+                    \item The $n$ counters of \alert{n}ot relevant clauses.
+                    \item The $m_i$ counters of \alert{m}atched cases $h_i, b$.
+                    \item Clause counters must verify $r \leq u + \sum_i m_i$.
+                \end{itemize}
+            \end{enumerate}  
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Updates and counters: An example}
+        Given the following ASP program with \textbf{annotated counters},
+        $$        
+        \begin{aligned}
+            %&H \leftarrow B&&\text{counters:}~ m_{1:n}; r, u, n \\
+            &b \vee \neg b &&\text{counters:}~ 7, 2; 12, 3, 0 \\
+            &h_1 \vee h_2 \leftarrow b  &&\text{counters:}~ 4 , 3 ; 6, 2, 5
+        \end{aligned}
+        $$
+        \onslide*<2>{
+            \begin{columns}[t]
+                \begin{column}{0.5\textwidth}                    
+                \begin{block}{Counters of $b \vee \neg b$}\small
+                    $0$ observations where not relevant (because the body is $\top$); 
+                    
+                    There where $12$ relevant observations; 
+                    
+                    Of those, $b$ was matched by $7$, $\neg b$ by $2$ and $3$ observations matched neither ($\models\naf b, \naf \neg b$).
+                \end{block}
+                \end{column}
+                \begin{column}{0.5\textwidth}                    
+                \begin{block}{Counters of $h_1 \vee h_2 \leftarrow b$}\small
+                    There where $11 = 6 + 5$ observations, $6$ relevant to this clause; 
+                    
+                    From these, $4$ matched $h_1$, $3$ matched $h_2$ and $2$ matched no case.
+                \end{block}
+                \end{column}
+            \end{columns}
+        }
+        \onslide<3->
+        \begin{block}{What can be computed?}
+            \begin{itemize}
+                \item $P(\neg b) = \frac{2}{12}$ because $\neg b$ matched $2$ of $12$ relevant observations.
+                \item $P(h_1 | b) = \frac{4}{6}$ because $h_1$ matched $4$ of $6$ relevant observations.
+                \item $P(b)$ \alert{can't be computed} without further information. \emph{E.g.} supposing that \textbf{observations are independent} then
+                $$P(b) = \frac{7 + 6}{12 + 0 + 6 + 5}.$$ 
+            \end{itemize}
+            
+        \end{block}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Updates and counters: An example}
+        Given the following ASP program with \textbf{annotated counters},
+        $$        
+        \begin{aligned}
+            %&H \leftarrow B&&\text{counters:}~ m_{1:n}; r, u, n \\
+            &b \vee \neg b &&\text{counters:}~ 7, 2; 12, 3, 0 \\
+            &h_1 \vee h_2 \leftarrow b  &&\text{counters:}~ 4 , 3 ; 6, 2, 5
+        \end{aligned}
+        $$
+        \begin{block}{Note\ldots}
+            \onslide*<1>{Counters are local to clauses and, for distinct clauses, may result from distinct sources. \emph{E.g. the relevant counter of $h_1 \vee h_2 \leftarrow b$ and the match counter of $b$ in $b \vee \neg b$.}}
+            \onslide*<3>{Some observations may have neither $b$ nor $\neg b$: $$P(b) + P(\neg b) < 1.$$}
+            \onslide*<4>{Since $h_1$ and $h_2$ are not independent, $$\sum_m P(m) \approx 1.02 > 1.$$}
+            \onslide*<5>{What is missing to compute the \alert{joint distribution} of the program's atoms $$P(H_1, H_2, B)?$$}
+        \end{block}
+    \end{frame}
+    
+    \begin{frame}
+        \frametitle{Shortcomming 2: Default Negation}
+    
+        \begin{itemize}
+            \item How to deal with rules with $\naf a$ parts?
+            \item Should missing elements on observations be replaced with $\naf a$ atoms?
+        \end{itemize}
+    \end{frame}
+    \section{Conclusions}
+    
+    \begin{frame}
+        \tableofcontents[currentsection]
+    \end{frame}
+    
+    \section*{Background Material}
+    
+    \begin{frame}
+        \Huge Background Material
+    \end{frame}
+
+    \begin{frame}{Machine Learning}
+        Models are numeric functions: $y \approx f_\theta(x),~\theta_i, x_j, y\in\mathbf{R}$.
+        \begin{itemize}
+            \item Amazing achievements.
+            \item Noise tolerant.
+            \item (as of today) Huge enterprise funding .
+        \end{itemize}
+        but
+        \begin{itemize}
+            \item (essentially) Academically solved.
+            \item Models trained from ``large'' amounts of samples.
+            \item Hard to add background knowledge.
+            \item Models are hard to interpret.
+            \item Single table, independent rows assumption.
+        \end{itemize}
+    \end{frame}
+    
+    \begin{frame}{Inductive Logic Programming}
+        Models are logic program: $p_\theta(x, y),~\theta_i, x_j, y\in{\cal A}$.
+        \begin{itemize}
+            \item Amazing achievements, at scale.
+            \item Models trained from ``small'' amounts of samples.
+            \item Compact, readable models.
+            \item Background knowledge is easy to incorporate and edit.
+        \end{itemize}
+        but
+        \begin{itemize}
+            \item as of today, Little enterprise commitment.
+            \item as of today, Mostly academic interest.
+            \item Noise sensitive.
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Distribution Semantics}
+        Assigns probability to (marginally independent) facts and derives probability of ground propositions.
+
+        Let $F$ be set of facts, $S\subseteq F$, $R$ a set of definite clauses and $p$ a proposition:
+        $$\small
+        \begin{aligned}
+            P_F(S) &= \prod_{f \in S} P(f) \prod_{f \not\in S} \left(1 - P(f) \right) \cr
+            P(W) &= \sum_{S \subseteq F :~W=M(S\cup R)} P_F(S) \cr
+            P(p) &= \sum_{S :~ S\cup R ~\vdash~ p} P_F(S) = \sum_{W :~ p\in W} P(W)
+        \end{aligned}
+        $$
+        \begin{itemize}
+            \item Amazing achievements, at scale.
+            \item Lots of tools and research.
+            \item The best of both ``worlds''?
+        \end{itemize}
+        
+    \end{frame}
+
+    \begin{frame}{Answer Set Programming}
+        A ``program'' defines stable models \emph{i.e.} minimal sets of derived ground atoms\footnote{Alternative \xout{fact} definition: $X$ is a stable model of $P$ if $X = \text{Cn}(P^X)$.}.  
+        \begin{itemize}
+            \item Pure declarative language, unlike Prolog.
+            \item Uses \emph{generate \& test} methods instead of proofs .
+            \item Uses both default $\sim\!p$ and classical negation $\neg p$\footnote{Classic negation $\neg a$ in ASP results from replacing the occurrences of $\neg a$ by a new atom $a_\neg$ and adding the restriction $\leftarrow a_\neg, a$.}
+            \item Clauses can be disjunctive $a ; b \leftarrow c, d.$
+        \end{itemize}
+    \end{frame}
+
+    \subsection*{Stable Sets}
+    
+    \begin{frame}
+        \tableofcontents[currentsection]
+    \end{frame}
+
+    \subsection*{References}
+    
+    \begin{frame}
+        \tableofcontents[currentsection]
+    \end{frame}
+\end{document}
+
+

@@ -1,0 +1,2 @@
+cross :- -train.
+train;-train.

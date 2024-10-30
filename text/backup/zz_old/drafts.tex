@@ -1,0 +1,83 @@
+\documentclass{standalone}
+
+\usepackage[x11colors]{xcolor}
+%
+\usepackage{tikz}
+\tikzset{
+    event/.style={},
+    smodel/.style={fill=gray!25},
+    tchoice/.style={draw, circle},
+    indep/.style={draw, dashed},
+    proptc/.style = {-latex, dashed},
+    propsm/.style = {-latex, thick},
+    doubt/.style = {gray}
+}
+\usetikzlibrary{calc, positioning}
+%
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+}
+
+
+\usepackage{commath}
+
+
+%
+% Local commands
+%
+\newcommand{\note}[1]{\marginpar{\scriptsize #1}}
+\newcommand{\naf}{\ensuremath{\sim\!}}
+\newcommand{\larr}{\ensuremath{\leftarrow}}
+\newcommand{\at}[1]{\ensuremath{\!\del{#1}}}
+\newcommand{\co}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\fml}[1]{\ensuremath{{\cal #1}}}
+\newcommand{\deft}[1]{\textbf{#1}}
+\newcommand{\pset}[1]{\ensuremath{\mathbb{P}\at{#1}}}
+\newcommand{\ent}{\ensuremath{\lhd}}
+\newcommand{\cset}[2]{\ensuremath{\set{#1,~#2}}}
+\newcommand{\langof}[1]{\ensuremath{\fml{L}\at{#1}}}
+\newcommand{\uset}[1]{\ensuremath{\left|{#1}\right>}}
+\newcommand{\lset}[1]{\ensuremath{\left<{#1}\right|}}
+\newcommand{\pr}[1]{\ensuremath{\mathrm{P}\at{#1}}}
+\newcommand{\given}{\ensuremath{~\middle|~}}
+
+\begin{document}
+\begin{tikzpicture}
+    \node[event] (E) {$\bot$};
+    \node[tchoice, above left = of E] (a) {$a$};
+    \node[smodel, above left = of a] (ab) {$ab$};
+    \node[smodel, above right = of a] (ac) {$ac$};
+    \node[event, below = of ab] (b) {$b$};
+    \node[event, below = of ac] (c) {$c$};
+    \node[event, above right = of ab] (abc) {$abc$};
+    \node[indep, right = of ac] (bc) {$bc$};
+    \node[tchoice, smodel, below right = of bc] (A) {$\co{a}$};
+    \node[event, above = of A] (Ac) {$\co{a}c$};
+    \node[event, above right = of Ac] (Abc) {$\co{a}bc$};
+    % ----
+    \draw[proptc] (a) to[bend left] (ab);
+    \draw[proptc] (a) to[bend right] (ac);
+
+    \draw[propsm] (ab) to[bend left] (abc);
+    \draw[propsm] (ac) to[bend right] (abc);
+
+    \draw[propsm] (A) to[bend right] (Ac);
+    \draw[propsm] (A) to[bend right] (Abc);
+
+    \draw[doubt] (ab) to[bend right] (E);
+    \draw[doubt] (ac) to[bend right] (E);
+    \draw[doubt] (A) to[bend left] (E);
+
+    \draw[doubt] (ab) to[bend right] (b);
+    \draw[doubt] (ac) to[bend left] (c);
+    \draw[doubt] (ab) to[bend left] (a);
+    \draw[doubt] (ac) to[bend right] (a);
+    \draw[doubt] (c) to[bend right] (bc);
+    \draw[doubt] (abc) to[bend left] (bc);
+    \draw[doubt] (Abc) to (bc);
+    \draw[doubt] (c) to[bend right] (Ac);
+\end{tikzpicture}
+    
+\end{document}

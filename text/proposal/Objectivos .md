@@ -1,0 +1,1 @@
+O nosso objetivo é o desenvolvimento de um conjunto de ferramentas informáticas para aplicar e avaliar os resultados teóricos a problemas relevantes e bem conhecidos. O alvo inicial é a suite de referência Potassco, que suporta a linguagem ASP-Core-2 e proporciona uma API Python para os programas de grounding (CLASP) e resolução (CLINGO).

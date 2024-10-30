@@ -1,0 +1,42 @@
+https://ceur-ws.org/Vol-3204/paper_9.pdf                               (Damiano Azzolini, Elena Bellodi and Fabrizio Riguzzi)
+
+	Abduction in ASP an PASP
+
+https://link.springer.com/article/10.1007/s10489-022-03669-z            (Serge Sonfack Sounchio, Laurent Geneste & Bernard Kamsu Foguem)
+
+	evaluate ASP models’ beliefs using experts’ evidence distributions, while reducing the knowledge-intensive load of the expertise process
+
+
+https://hal-emse.ccsd.cnrs.fr/emse-03261182/file/actes_IC_CH_PFIA2021.pdf#page=99      (S. SONFACK SOUNCHIO, L. GENESTE, B. KAMSU FOGUE)
+
+	Hybridation of ASP 
+
+
+https://link.springer.com/chapter/10.1007/978-3-031-15707-3_4            (Damiano Azzolini, Elena Bellodi & Fabrizio Riguzzi)
+
+
+	“Probabilistic Answer set programming for STAtistical probabilities”
+
+
+https://content.iospress.com/articles/fundamenta-informaticae/fi1975               ( Tarzariol, Alice; Zanazzo, Eugenia; Dovier, Agostino; Policriti, Alberto)
+
+	Use ASP to develop a tool-chain capable of analyzing a data collection of temporally qualified (genetic) mutation profile
+
+
+https://link.springer.com/chapter/10.1007/978-3-030-97454-1_4                  (Leopoldo Bertossi & Gabriela Reyes)
+
+	how answer-set programs can be used to declaratively specify counterfactual interventions on entities under classification, and reason about them.
+
+
+https://www.sciencedirect.com/science/article/pii/S0888613X20302012?casa_token=9T4mnIP5OR4AAAAA:_39BvC91LBUO2wPyHMozq1iUdrmqHF7rwk15uXieLGQbd53Ddr-BNZtYGK7JD9wR3VDt7ZKnIw
+
+(Fabio Gagliardi Cozman, Denis Deratani Mauá)
+
+
+		inference algorithm to compute (upper) probabilities given a program. (PASP)
+
+
+https://link.springer.com/chapter/10.1007/978-3-030-99461-7_12               (Germán Vidal)
+
+
+	Explanations as Programs in Probabilistic Logic Programming

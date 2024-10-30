@@ -1,0 +1,10 @@
+name = "ASP"
+uuid = "787491fc-541a-4303-b5b6-89ef4c764caf"
+authors = ["Francisco Coelho"]
+version = "1.0.0-DEV"
+
+[deps]
+ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+
+[compat]
+julia = "1.7"

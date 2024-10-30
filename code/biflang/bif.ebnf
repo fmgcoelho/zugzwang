@@ -1,0 +1,63 @@
+Digit ::= [0-9]
+PDigit::= [1-0]
+Letter ::= ["a"-"z" "A"-"Z" "_" "-"]
+Word   ::= Letter (Letter | Digit)*
+
+Decimal         ::= PDigit Digit*
+Exponent        ::= ("e" | "E") ("+" | "-")? Digit+
+FloatingPoint   ::= Digit+ "." Digit* Exponent?
+    |   "." Digit+ Exponent?
+    |   Digit+ Exponent
+
+
+NetworkKW         ::= "network"
+VariableKW        ::= "variable"
+ProbabilityKW     ::= "probability" 
+PropertyKW        ::= "property" 
+VariableTypeKW    ::= "type" 
+DiscreteKW        ::= "discrete" 
+DefaultValueKW    ::= "default" 
+TableValuesKW     ::= "table" 
+
+PropertyString  ::= PropertyKW (~";")* ";"
+
+Property            ::= 
+FloatingPointToken  ::=
+
+FloatingPointList   ::= FloatingPointToken+
+
+ProbabilityTable    ::= FloatingPointList ";"
+
+ProbabilityDefaultEntry ::=  FloatingPointList ";"
+
+ProbabilityVariableValue    ::= Word
+
+ProbabilityValuesList   ::= "(" ProbabilityVariableValue+ ")"
+
+ProbabilityEntry    ::=  ProbabilityValuesList FloatingPointList ";"
+
+ProbabilityContent  ::=  "{" ( Property | ProbabilityDefaultEntry   | ProbabilityEntry | ProbabilityTable )* "}"
+
+ProbabilityVariableName ::= 
+
+ProbabilityVariablesList ::= "(" ProbabilityVariableName+ ")"
+
+ProbabilityDeclaration  ::= ProbabilityKW ProbabilityVariablesList ProbabilityContent
+
+
+VariableValuesList  ::= ProbabilityVariableValue+
+
+VariableDiscrete ::= VariableTypeKW DiscreteKW "[" Decimal "]" 
+        "{" VariableValuesList "}" ";"
+
+VariableContent ::= "{" (Property | VariableDiscrete)* "}"
+
+VariableDeclaration ::= VariableKW ProbabilityVariableName VariableContent
+
+
+NetworkContent  ::=  "{" ( Property )* "}"
+NetworkDeclaration  ::= NetworkKW Word NetworkContent
+
+CompilationUnit ::= NetworkDeclaration (VariableDeclaration | ProbabilityDeclaration)* EOS
+
+

@@ -1,0 +1,76 @@
+2024-04-09:
+- spa: fazer branch para ICLP
+
+- Deadlines: 
+    - abstract  24 abr
+    - paper     01 mai
+- Dietmar Seipel on board
+- [ ] ICLP: papers companions
+- [ ] versões arXiv
+- [ ] versão final
+
+Sumário de revisões e tarefas
+
+[ ] State-of-the-art:    
+    [.] Thorough comparison with related work.     
+[ ] Motivation:    
+    [ ] Clarify the application of the approach.
+    [ ] Explore the advantages and limitations of the formalism.    
+[ ] Technical details - fc
+    [.] Self-containment
+    [.] Detail syntax and semantics of the considered class of programs.
+    [.] Clarify the relation of stable models and events.
+    [.] Recall the stable model semantics and its properties.
+    [ ] Argument for Proposition 1 [is not] convincing.    
+[ ] Fixes:    
+    [.] Provide the probabilities of the classes and of the events.
+    [x] Clarify the role of ``testing of the prior distributions''.
+    [ ] Give a general argument [about Bayesian networks] instead of an illustration on a simple example - bd.
+[ ] Revise overall text.
+
+      
+2024-04-03:
+
+Sumário de revisões
+
+[ ] State-of-the-art:    
+    [.] Thorough comparison with related work.     
+[ ] Motivation:    
+    [ ] Clarify the application of the approach.
+    [ ] Explore the advantages and limitations of the formalism.    
+[ ] Technical details:    
+    [.] Self-containment
+    [.] Detail syntax and semantics of the considered class of programs.
+    [.] Clarify the relation of stable models and events.
+    [.] Recall the stable model semantics and its properties.
+    [ ] Argument for Proposition 1 [is not] convincing.    
+[ ] Fixes:    
+    [.] Provide the probabilities of the classes and of the events.
+    [ ] Clarify the role of ``testing of the prior distributions''.
+    [ ] Give a general argument [about Bayesian networks] instead of an illustration on a simple example - bd.
+[ ] Revise overall text.
+
+2024-03-26:
+
+- todos: fazer review incremental SotA e related work
+- restruturação artigo: 
+
+2024-03-27:
+
+Sumário de revisões
+
+[ ] State-of-the-art:    
+    [ ] Thorough comparison with related work.     
+[ ] Motivation:    
+    [ ] Clarify the application of the approach.
+    [ ] Explore the advantages and limitations of the formalism.    
+[ ] Technical details:    
+    [.] Self-containment
+    [.] Detail syntax and semantics of the considered class of programs.
+    [.] Clarify the relation of stable models and events.
+    [.] Recall the stable model semantics and its properties.
+    [ ] Argument for Proposition 1 [is not] convincing.    
+[ ] Fixes:    
+    [.] Provide the probabilities of the classes and of the events.
+    [ ] Clarify the role of ``testing of the prior distributions''
+    [ ] Give a general argument [about Bayesian networks] instead of an illustration on a simple example.

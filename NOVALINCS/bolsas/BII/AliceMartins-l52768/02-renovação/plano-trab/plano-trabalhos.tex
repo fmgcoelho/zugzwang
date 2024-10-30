@@ -1,0 +1,38 @@
+% !TeX program = xelatex
+\documentclass{oficio}
+
+\usepackage{polyglossia}
+\setmainlanguage{portuges}
+
+\def\ASSINATURA{\includegraphics{fcsig.pdf}}
+
+\begin{document}
+\unidade{\textsc{\DI}}
+\documento{%
+NL/ZZ/BII/1/AM/2
+}{%
+Renovação de BII --- Plano de Trabalhos}{%
+31 de julho de}
+%\EU{}
+
+\qualidade{(Professor Auxiliar)}
+
+Considerando que foi já implementada uma biblioteca \texttt{Python} que proporciona as seguintes funcionalidades:
+%
+\begin{itemize}
+    \item Ler a descrição de uma rede Bayesiana num formato comum (\texttt{BIF}) para uma representação intermédia.
+    \item Escrever uma especificação \texttt{ASP} anotada com probabilidades a partir da representação intermédia indicada no ponto anterior.
+\end{itemize}
+%
+e que, com esta biblioteca é possível aplicar métodos e ferramentas desenvolvidos no âmbito do projeto ``\emph{Zugzwang | Lógica e Inteligência Artificial}'' a um conjunto alargado de problemas, \textbf{pretende-se continuar,} com a implementação duma biblioteca \texttt{Python} para processar ficheiros de código ASP anotados com probabilidades incluindo as seguintes funcionalidades:
+
+\begin{itemize}
+
+    \item Extração das anotações e associação aos factos relevantes.
+    \item Comunicação com o sistema Potassco para obtenção dos resultados do programa ASP subjacente.
+    \item Cálculos de probabilidades com base nos modelos estáveis obtidos no passo anterior, nas anotações extraídas no passo 1, e nos resultados teóricos deste projeto.    
+\end{itemize}
+
+\CHAU{Com os melhores cumprimentos,}
+
+\end{document}

@@ -1,0 +1,111 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[
+    bibstyle=numeric,
+    citestyle=numeric
+]{biblatex} %Imports biblatex package
+\addbibresource{zugzwang.bib} %Import the bibliography file
+
+\usepackage{commath}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue,
+    linkcolor=blue,
+}
+
+\title{Zugzwang\\\textit{Logic and Artificial Intelligence}}
+\author{
+    \begin{tabular}{cc}
+        Francisco Coelho & Bruno Dinis\\
+        \texttt{fc@uevora.pt} & \texttt{bruno.dinis@uevora.pt}
+    \end{tabular}    
+}
+
+\begin{document}
+
+\maketitle
+
+\nocite{*}
+
+\begin{abstract}
+    A major limitation of logical representations is the implicit assumption that the Background Knowledge (BK) is perfect. This assumption is problematic if data is noisy, which is often the case. Here we aim to explore how ASP specifications with probabilistic facts can lead to characterizations of probability functions on the specification's domain. 
+\end{abstract}
+
+\section{Introduction and Motivation }
+
+Answer Set Programming (ASP) \cite{gebser2012answer} is a logic programming paradigm based on the Stable Model semantics of Normal Logic Programs (NP) that can be implemented using the latest advances in SAT solving technology. ASP is a truly declarative language that supports language constructs such as disjunction in the head of a clause, choice rules, and hard and weak constraints.
+
+The Distribution Semantics (DS) \cite{riguzzi2022foundations} is a key approach to extend logical representations with probabilistic reasoning. Probabilistic Facts (PF) \cite{riguzzi2022foundations} are the most basic stochastic DS primitive and they take the form of logical facts, $a$, labelled with a probability, such as $p::a$; Each probabilistic fact represents a boolean random variable that is true with probability $p$ and false with probability $1 - p$. A (consistent) combination of the PFs defines a \textit{total choice} $\theta = \set{p::a, \ldots}$ such that
+
+\begin{equation}
+    P(\theta) = \prod_{a\in\theta} p \prod_{a \not\in \theta} (1- p).
+\end{equation}
+
+Our goal is to extend this probability, from total choices, to cover the specification domain. We can foresee two key applications of this extended probability:
+
+\begin{enumerate}
+    \item Support any probabilistic reasoning/task on the specification domain.
+    \item Also, given a dataset and a divergence measure, now the specification can be scored (by the divergence w.r.t. the \emph{empiric} distribution of the dataset), and sorted amongst other specifications. This is a key ingredient in algorithms searching, for example, an \textit{optimal specification} of the dataset. 
+\end{enumerate}
+
+This goal faces a critical problem concerning situations where \textit{multiple} standard models result from a given total choice\cite{cozman2020joy}, illustrated by the following example. The specification 
+$$
+\begin{aligned}
+    0.3::a&,\cr
+    b \vee c& \leftarrow a.
+\end{aligned}
+$$
+has three stable models, $\set{\neg a}, \set{a, b}$ and $\set{a, c}$. While it is straightforward to set $P(\neg a)=0.7$, there is \textit{no further information} to assign values to $P(a,b)$ and $P(a,c)$. At best, we can use a parameter $\alpha$ such that
+$$
+\begin{aligned}
+P(a,b) &= 0.3 \alpha,\cr
+P(a,c) &= 0.3 (1 - \alpha).
+\end{aligned}
+$$
+
+This uncertainty in inherent to the specification, but can be mitigated with the help of a dataset: the parameter $\alpha$ can be estimated from the empirical distribution.
+
+In summary, if an ASP specification is intended to describe some system that can be observed then:
+
+\begin{enumerate}
+    \item The observations can be used to estimate the value of the parameters (such as $\alpha$ above and others entailed from further clauses).
+    \item With a probability set for the stable models, we want to extend it to all the samples (\textit{i.e.} consistent sets of literals) of the specification. 
+    \item This extended probability can then be related to the \textit{empirical distribution}, using a probability divergence, such as Kullback-Leibler; and the divergence value used as a \textit{performance} measure of the specification with respect to the observations.
+    \item If that specification is only but one of many possible candidates then that performance measure can be used, \textit{e.g.} as fitness, by algorithms searching (optimal) specifications of a dataset of observations.
+\end{enumerate}
+
+Currently, we are on the step two above: Extending a probability function (with parameters such as $\alpha$), defined on the stable sets of a specification, to all the samples of the specification. This extension must, of course, respect the axioms of probability so that probabilistic reasoning is consistent with the ASP specification. 
+
+\section{Work Plan}
+
+A team of two researchers and a undergraduate, master, or Ph.D. student, working over six months with adequate resources, should be able to advance substantial contributions and produce an intermediate progress report for a workshop, a final comprehensive paper for a conference, or start a Ph.D. project with greater reach and depth, describing:
+
+\begin{itemize}
+    \item The formalization of the methods outlined above, including the parameter estimation from observations and the probability distribution over the specification samples.
+    \item Application and evaluation of this approach, using tools such as \hyperlink{https://ciao-lang.org/playground/scasp.html}{s(casp)}, or the \hyperlink{https://potassco.org/}{Potassco suit} to a range of problems from the simple \textit{Burglar, Earthquake, Alarm} to measuring a specification accuracy on a given dataset, or finding an optimal specification for a given dataset given some background knowledge. 
+\end{itemize}
+
+While the theoretical work for this project has yet to be completed, there are some relevant tasks that, with different levels of ambition, can be started right now: 
+\begin{enumerate}
+    \item \textit{Extract Probability Annotations}. For example, convert the annotated specification \verb!0.3::a. b ; c :- a.! to \verb! a ; -a. b ; c :- a!. This is a simple, syntactical task that can be implemented either with \texttt{prolog} or using \texttt{python} and the API provided by the Potassco suite.
+    \item \textit{Extend Probability to Stable Models}. Application of the method outlined before, where the probability of total choices is extended to standard models using parameters, which are next estimated with a dataset.  
+    \item \textit{Relate Samples, Stable Models and Total Choices}. Determine which stable models, or total choices, contain and which are contained in a given sample. 
+    \item \textit{Propagate Probability to Samples}. Use of the relation above to assign a probability to an arbitrary event, using an aggregation operation, such as $\max$ or $\prod$, from the relevant stable models.
+    \item \textit{Process Evaluation on Well-known Cases}. Assessment of the implemented prototype using well-known problems such as the ``A\-larm-Bur\-glar-Earth\-qua\-ke''. 
+\end{enumerate} 
+ 
+\section*{References}
+
+\printbibliography
+
+% \begin{enumerate}
+%     \item Victor Verreet, Vincent Derkinderen, Pedro Zuidberg Dos Martires, Luc De Raedt, Inference and Learning with Model Uncertainty in Probabilistic Logic Programs (2022)
+%     \item Andrew Cropper, Sebastijan Dumancic, Richard Evans, Stephen H. Muggleton, Inductive logic programming at 30 (2021)
+%     \item Fabio Gagliardi Cozman, Denis Deratani Mauá, The joy of Probabilistic Answer Set Programming: Semantics - complexity, expressivity, inference (2020)
+%     \item Fabrizio Riguzzi, Foundations of Probabilistic Logic Programming Languages, Semantics, Inference and Learning. Rivers Publishers (2018) 
+%     \item Martin Gebser, Roland Kaminski, Benjamin Kaufmann, and Torsten Schaub, Answer Set Solving in Practice, Morgan \& Claypool Publishers (2013)
+% \end{enumerate}
+
+\end{document}

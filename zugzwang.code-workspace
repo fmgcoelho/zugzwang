@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "text/pasp_paper"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"biblatex",
+			"cplint",
+			"CREDAL",
+			"functors",
+			"Herbrand",
+			"Hirings",
+			"interpretability",
+			"println",
+			"SASP",
+			"stablecore",
+			"testset",
+			"uminus"
+		],
+		"cSpell.enableFiletypes": [
+			"latex"
+		],
+		"aspLanguage.setConfig": "config.json",
+		"julia.environmentPath": "/home/fc/sci/projetos/zugzwang",
+		"liveServer.settings.multiRootWorkspaceName": "zugzwang"
+	}
+}

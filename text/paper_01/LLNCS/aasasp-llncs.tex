@@ -1,0 +1,1336 @@
+%\documentclass[a4paper, 10pt]{article}
+\documentclass{llncs}
+
+\usepackage[
+bibstyle=numeric,
+citestyle=numeric
+]{biblatex} %Imports biblatex package
+\addbibresource{zugzwang.bib} %Import the bibliography file
+
+\usepackage[x11colors]{xcolor}
+
+\usepackage{tikz}
+\tikzset{
+event/.style={},
+smodel/.style={fill=gray!25},
+tchoice/.style={draw, circle},
+indep/.style={},%{draw, dashed},
+proptc/.style = {-latex, dashed},
+propsm/.style = {-latex, thick},
+doubt/.style = {gray}
+}
+\usetikzlibrary{calc, positioning, patterns}
+
+\usepackage{hyperref}
+\hypersetup{
+colorlinks=true,
+linkcolor=blue,
+citecolor=blue,
+urlcolor=blue,
+}
+
+\usepackage{commath}
+%\usepackage{amsthm}
+\newtheorem{assumption}{Assumption}
+%\newtheorem{definition}{Definition}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{example}{Example}
+%\newtheorem{theorem}{Theorem}
+\usepackage{amssymb}
+\usepackage[normalem]{ulem}
+\usepackage[nice]{nicefrac}
+\usepackage{stmaryrd}
+\usepackage{acronym}
+\usepackage{multicol}
+\usepackage{cleveref}
+%
+% Local commands
+%
+\newcommand{\naf}{\ensuremath{\sim\!}}
+\newcommand{\larr}{\ensuremath{\leftarrow}}
+\newcommand{\at}[1]{\ensuremath{\!\del{#1}}}
+\newcommand{\co}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\fml}[1]{\ensuremath{{\cal #1}}}
+\newcommand{\deft}[1]{\textbf{#1}}
+\newcommand{\pset}[1]{\ensuremath{\mathbb{P}\at{#1}}}
+\newcommand{\ent}{\ensuremath{\lhd}}
+\newcommand{\cset}[2]{\ensuremath{\set{#1,~#2}}}
+\newcommand{\langof}[1]{\ensuremath{\fml{L}\at{#1}}}
+\newcommand{\uset}[1]{\ensuremath{#1^{\ast}}}
+\newcommand{\lset}[1]{\ensuremath{#1_{\ast}}}
+\newcommand{\yset}[1]{\ensuremath{\left\langle #1 \right\rangle}}
+\newcommand{\stablecore}[1]{\ensuremath{\left\llbracket #1 \right\rrbracket}}
+\newcommand{\uclass}[1]{\ensuremath{\intco{#1}}}
+\newcommand{\lclass}[1]{\ensuremath{\intoc{#1}}}
+\newcommand{\smclass}[1]{\ensuremath{\intcc{#1}}}
+\newcommand{\pr}[1]{\ensuremath{\mathrm{P}\at{#1}}}
+\newcommand{\err}[1]{\ensuremath{\mathrm{err}\at{#1}}}
+\newcommand{\pw}[1]{\ensuremath{\mu\at{#1}}}
+\newcommand{\pwcfname}{\ensuremath{\mu_{\textrm{TC}}}}
+\newcommand{\pwc}[1]{\ensuremath{\pwcfname\at{#1}}}
+\newcommand{\class}[1]{\ensuremath{[{#1}]_{\sim}}}
+\newcommand{\urep}[1]{\ensuremath{\rep{#1}{}}}
+\newcommand{\lrep}[1]{\ensuremath{\rep{}{#1}}}
+\newcommand{\rep}[2]{\ensuremath{\left\langle #1 \middle| #2 \right\rangle}}
+\newcommand{\inconsistent}{\bot}
+\newcommand{\given}{\ensuremath{~\middle|~}}
+\newcommand{\emptyevent}{\ensuremath{\vartriangle}}
+\newcommand{\indepclass}{\ensuremath{\Diamond}}
+\newcommand{\probfact}[2]{\ensuremath{#2\mkern-4mu:\mkern-4mu#1}}
+\newcommand{\probrule}[3]{\probfact{#1}{#2} \leftarrow #3}
+%\newcommand{\tcgen}[1]{\ensuremath{\widehat{#1}}}
+\newcommand{\tcgen}[1]{\ensuremath{\left<#1\right>}}
+\newcommand{\lfrac}[2]{\ensuremath{{#1}/{#2}}}
+\newcommand{\condsymb}[2]{\ensuremath{p_{#1|#2}}}
+%
+%\newcommand{\oldnote}[1]{\marginpar{\scriptsize #1}}
+\newcommand{\oldnote}[1]{\note{#1}}
+\newcommand{\todo}[1]{{\color{red!50!black}(\emph{#1})}}
+% \newcommand{\oldremark}[2]{\uwave{#1}~{\color{green!40!black}(\emph{#2})}}
+\newcommand{\oldremark}[2]{\remark{#1}{#2}}
+\newcommand{\oldreplace}[2]{\sout{#1}/{\color{green!20!black}#2}}
+\newcommand{\delete}[1]{\xout{#1}}
+\newcommand{\franc}[1]{{\color{orange!60!black}#1}}
+\newcommand{\bruno}{\color{red!60!blue}}
+
+%
+%   Acronyms
+%
+\acrodef{BK}[BK]{background knowledge}
+\acrodef{ASP}[ASP]{answer set programming}
+\acrodef{NP}[NP]{normal program}
+\acrodef{DS}[DS]{distribution semantics}
+\acrodef{PF}[PF]{probabilistic fact}
+\acrodef{TC}[TC]{total choice}
+\acrodef{SM}[SM]{stable model}
+\acrodef{SC}[SC]{stable core}
+\acrodef{KL}[KL]{Kullback-Leibler}
+\acrodef{SBF}[SBF]{Simple But Fruitful}
+\acrodef{RSL}[RSL]{Random Set of Literals}
+\acrodef{RCE}[RCE]{Random Consistent Event}
+%
+
+%
+%
+%
+\renewcommand{\remark}[2]{%
+    \stepcounter{remark}%
+    \!{\color{red}/\!}%
+    #1%
+    {\!\color{red}/}\footnotemark[\arabic{remark}]%
+    \footnotetext[\arabic{remark}]{{\color{red}/}#2}%
+    }
+\renewcommand{\note}[1]{
+    \stepcounter{remark}%
+    {\!\!\color{red}/}\footnotemark[\arabic{remark}]\!\!%
+    \footnotetext[\arabic{remark}]{{\color{red}/}#1}
+}
+%
+%
+%
+\begin{document}
+%
+%
+%
+%
+%
+	\title{An Algebraic Approach to Stochastic ASP}
+	\author{Salvador Abreu\inst{1} \and   Francisco Coelho\inst{1} \and Bruno Dinis \inst{1}}
+	\institute{Universidade de Évora}
+	\date{}
+	\maketitle\thispagestyle{empty}
+	
+%
+%
+%
+\begin{abstract}
+    We address the problem of extending probability from the total choices of an \acs{ASP} program to the \aclp{SM}, and from there to general events.
+    %
+    Our approach is algebraic in the sense that it relies on an equivalence relation over the set of events and uncertainty is expressed with variables and polynomial expressions.
+    %
+    We illustrate our methods with two examples, one of which shows a connection to bayesian networks.
+\end{abstract}
+%
+%
+%
+\section{Introduction and Motivation}
+%
+%
+%
+A major limitation of logical representations in real world applications is the implicit assumption that the \acl{BK} is perfect. This assumption is problematic if data is noisy, which is often the case. Here we aim to explore how \acl{ASP} programs with probabilistic facts can lead to characterizations of probability functions on the program's domain, which is not straightforward in the context of \acl{ASP}, as explained below (see also \cite{cozman2020joy,verreet2022inference,baral2009probabilistic,pajunen2021solution}). Unlike current systems such as ProbLog \cite{de2007problog}, P-log \cite{baral2009probabilistic}, LP\textsuperscript{MLN} \cite{lee2016weighted}, or cplint \cite{alberti2017cplint}, that derive a probability distribution from a program, in our system some choices are represented by a parameter that can be later estimated from further information, \emph{e.g.}\ observations. This approach enables later refinement and scoring of a partial program of a model from additional evidence.
+
+\Ac{ASP} \cite{lifschitz2002answer} is a logic programming paradigm based on the \ac{SM} semantics of \acp{NP} that can be implemented using the latest advances in SAT solving technology. Unlike ProLog, \ac{ASP} is a truly declarative language that supports language constructs such as disjunction in the head of a clause, choice rules, and both hard and weak constraints.
+
+The \ac{DS} \cite{sato1995statistical,riguzzi2022foundations} is a key approach to extend logical representations with probabilistic reasoning. 
+%
+Let $\fml{A}$ be a finite set of atoms. A \emph{pre-total choice} is a subset $t^{\ast}$ of \fml{A}. The \emph{\acl{TC}} (TC) associated to $t^{\ast}$ is the set $t := t^{\ast} \cup \set{\co{a} \given a \in \fml{A} \setminus t^{\ast}}$ where $\co{a}$ stands for $\neg a$. \Acp{PF} are the most basic \ac{DS} stochastic primitives and take the form  $\probfact{p}{a}$ where each $a\in\fml{A}$ is associated to some $p\in\intcc{0, 1}$. Each \ac{PF} then represents a boolean random variable that is true with probability $p$ and false with probability $\co{p} = 1 - p$.
+
+%\note{revisit this part. $\co{a}$ não foi definido! Talvez escrever $\neg a$ na definição de $t$?}
+Let $F = \set{\probfact{p}{a} \given a \in \fml{A}, p \in \intcc{0, 1}}$. For a \acl{TC} $t$ over $\fml{A}$, define
+$$
+P_t := \set{ p \given a \in t^{\ast} \wedge \probfact{p}{a} \in F} \cup 
+    \set{\co{p} \given a \in t \setminus t^{\ast} \wedge \probfact{p}{a} \in F}
+$$
+
+and
+
+\begin{equation}
+    \pr{T = t} = \prod_{p \in P_t} p,
+    \label{eq:prob.total.choice}
+\end{equation}
+
+where $T$ is a random variable whose values are \aclp{TC}.
+
+Our goal is to extend this probability (which is, indeed, a product of Bernoulli distributions \cite{Teugels90}), from \aclp{TC}, to cover the program domain. We use the term ``program'' as a set of rules and facts, plain and probabilistic. We can foresee two key applications of this extended probability:
+
+\begin{enumerate}
+    \item Support probabilistic reasoning/tasks on the program domain.
+    \item Given a dataset and a divergence measure, the program can be scored (by the divergence w.r.t.\ the \emph{empiric} distribution of the dataset), and weighted or sorted amongst other programs. These are key ingredients in algorithms searching, for example, optimal models of a dataset.
+\end{enumerate}
+
+To extend probabilities from \aclp{TC} we start with the stance that \emph{a program describes an observable system}, that \emph{the \aclp{SM} are all the possible states} of that system and that \emph{observations (i.e.\ events) are stochastic} --- one observation can be sub-complete (a proper subset of a \ac{SM}) or super-complete (a proper superset of a \ac{SM}),
+%\note{We should explain this!}
+ and might not determine the real state of the system. From here, probabilities must be extended from \acp{TC} to \acp{SM} and then to any event.
+%
+This extension process starts with a critical problem, illustrated by the  example in \cref{sec:example.1}, concerning situations where multiple \acp{SM}, $ab$ and $ac$, result from a single \ac{TC}, $a$, but there is not enough information (in the program) to assign a single probability to each \ac{SM}. We propose to address this issue by using algebraic variables to describe that lack of information and then estimate the value of those variables from empirical data. This lack of uniqueness is also addressed in \cite{cozman2020joy} along a different approach, using credal sets.
+
+In another related work \cite{verreet2022inference} epistemic uncertainty (or model uncertainty) is considered as a lack of knowledge about the underlying model, that may be mi\-ti\-ga\-ted via further observations. This seems to presuppose a bayesian approach to imperfect knowledge in the sense that having further observations allows to improve/correct the model. Indeed, that approach uses Beta distributions on the total choices in order to be able to learn a distribution on the events
+%\remark{events}{Check this: do they learn distributions on the events?}
+. This approach seems to be specially fitted to being able to tell when some probability lies beneath some given value. Our approach seems to be similar in spirit, while remaining algebraic in the way that the extension of probabilities is addressed.
+
+The example in \cref{sec:example.1} uses the code available in the project's repository\footnote{\url{https://git.xdi.uevora.pt/fc/sasp}}, developed with the \textit{Julia} programming language \cite{bezanson2017julia}, and the \textit{Symbolics} \cite{gowda2021high}, and \textit{DataFrames} \cite{bouchetvalat2023dataframes} libraries.
+%
+%
+%
+\section{A Simple but Fruitful Example}\label{sec:example.1}
+%
+%
+%
+In this section we consider a somewhat simple case that showcases the problem of extending probabilities from \aclp{TC} to \aclp{SM} and then to events. As mentioned before, the main issue arises from the lack of information in the program to assign a single probability to each stable model. This becomes a crucial problem in situations where multiple \aclp{SM} result from a single \acl{TC}. We will come back to this example in \cref{subsec:sbf.example}, after we present our proposal for extending probabilities from \aclp{TC} to \aclp{SM} in \cref{sec:extending.probalilities}.
+
+
+\begin{example}\label{running.example}
+    Consider $\fml{A} = \set{a, b, c}$ and the following program
+    %\note{Introduce the notation $\probfact{p}{a}$ and what is the underlying ASP program.}
+
+    \begin{equation}
+        \begin{aligned}
+            \probfact{0.3}{a} & ,\cr
+            b \vee c          & \leftarrow a.
+        \end{aligned}
+        \label{eq:example.1}
+    \end{equation}
+
+    %\note{Explain how the SM are defined.}
+    %\note{Explain our position about negation and be clear about $\co{a} = \neg a$ and not $\co{a} =\,\sim\!\! a$.}
+    %\note{Introduce the parameterization $\theta_{s,t}$.}
+    The \emph{standard form} of this program results from replacing annotated facts, such as $\probfact{0.3}{a}$, by the associated disjunctions, $a \vee \neg a$. The \aclp{SM} of the annotated program are the same as the ones from the standard form:  $\co{a}, ab$ and $ac$, where $\co{a}$ stands for $\neg a$ (see \cref{fig:running.example}). While it is straightforward to assume $\pr{\co{a}}=0.7$, there is no obvious explicit way to assign values to $\pr{ab}$ and $\pr{ac}$. For instance, we can use a parameter $\theta$ as in
+    $$
+        \begin{aligned}
+            \pr{ab} & = 0.3 \theta,\cr
+            \pr{ac} & = 0.3 (1 - \theta)
+        \end{aligned}
+    $$
+    to express our knowledge that $ab,ac$ are events related in a certain way and, simultaneously, our uncertainty about that relation. The pa\-ra\-me\-ter $\theta=\theta_{s,t}$ depends on both the \acl{SM} $s$ and the \acl{TC} $t$. This uncertainty can then be addressed with the help of adequate distributions, such as empirical distributions from a dataset.
+\end{example}
+
+If an \ac{ASP} program is intended to describe some system then:
+
+\begin{enumerate}
+
+    \item With a probability set for the \aclp{SM}, we want to extend it to all the events of the program domain.
+
+    \item In the case where some statistical knowledge is available, for example, in the form of a distribution, we consider it as ``external'' knowledge about the parameters, that doesn't affect the extension procedure described below.
+
+    \item Statistical knowledge can be used to estimate parameters and to ``score'' the program.
+
+    \item\label{item:program.selection} If that program is only but one of many possible candidates then that score can be used, \emph{e.g.} as fitness, by algorithms searching (optimal) programs of a dataset of observations.
+
+    \item  If observations are not consistent with the program, then we ought to conclude that the program is wrong and must be changed accordingly.
+\end{enumerate}
+
+Currently, we are addressing the problem of extending a probability function (possibly using parameters such as $\theta$ above), defined on the \acp{SM} of a program, to all the events of that program. This extension must satisfy the Kolmogorov axioms of probability so that probabilistic reasoning is consistent with the \ac{ASP} program and follow our interpretation of \aclp{SM} as the states of an observable system.
+
+As sets, the \acp{SM} can have non-empty intersection. But, as states of a system, we assume that \acp{SM} are disjoint events, in the following sense:
+
+\begin{assumption}\label{assumption:smodels.disjoint}
+    \Aclp{SM} are disjoint events: For any set $X$ of \aclp{SM},
+    \begin{equation}
+        \pr{X} = \sum_{s\in X}\pr{s}
+    \end{equation}
+\end{assumption}
+
+Consider the \aclp{SM} $ab, ac$ from \cref{running.example}, that result from the clause $b \vee c \leftarrow a$ and the \acl{TC} $\set{a}$. Since we intend to associate each \acl{SM} with a state of the system, $ab$ and $ac$ should be \emph{disjoint} events. So $b \vee c$ is interpreted as an \emph{exclusive disjunction} and, from that particular clause, no further relation between $b$ and $c$ is assumed. This does not prevent that other clauses may be added that entail further dependencies between $b$ and $c$, which in turn may change the \aclp{SM}.
+
+By not making distribution assumptions on the clauses of the program we can state such properties on the semantics of the program, as we've done in assumption \ref{assumption:smodels.disjoint}.
+%
+%
+%
+\section{Extending Probabilities}\label{sec:extending.probalilities}
+%
+%
+%
+\begin{figure}[t]
+    \begin{center}
+        \begin{tikzpicture}
+            \node[event] (E) {$\emptyevent$};
+            \node[tchoice, above left = of E] (a) {$a$};
+            \node[smodel, above left = of a] (ab) {$ab$};
+            \node[smodel, above right = of a] (ac) {$ac$};
+            \node[event, below = of ab] (b) {$b$};
+            \node[event, below = of ac] (c) {$c$};
+            \node[event, above right = of ab] (abc) {$abc$};
+            \node[event, above left = of ab] (abC) {$\co{c}ab$};
+            \node[event, above right = of ac] (aBc) {$\co{b}ac$};
+            \node[indep, right = of ac] (bc) {$bc$};
+            \node[tchoice, smodel, below right = of bc] (A) {$\co{a}$};
+            \node[event, above = of A] (Ac) {$\co{a}c$};
+            \node[event, above right = of Ac] (Abc) {$\co{a}bc$};
+            % ----
+            \draw[doubt] (a) to[bend left] (ab);
+            \draw[doubt] (a) to[bend right] (ac);
+
+            \draw[doubt] (ab) to[bend left] (abc);
+            \draw[doubt] (ab) to[bend right] (abC);
+
+            \draw[doubt] (ac) to[bend right] (abc);
+            \draw[doubt] (ac) to[bend left] (aBc);
+
+            \draw[doubt, dashed] (Ac) to (Abc);
+
+            \draw[doubt] (A) to (Ac);
+            \draw[doubt] (A) to (Abc);
+
+            \draw[doubt] (ab) to[bend right] (E);
+            \draw[doubt] (ac) to[bend right] (E);
+            \draw[doubt] (A) to[bend left] (E);
+
+            \draw[doubt] (ab) to (b);
+            \draw[doubt] (ac) to (c);
+            % \draw[doubt] (ab) to[bend left] (a);
+            % \draw[doubt] (ac) to[bend right] (a);
+            \draw[doubt, dashed] (c) to[bend right] (bc);
+            \draw[doubt, dashed] (abc) to[bend left] (bc);
+            \draw[doubt, dashed] (bc) to (Abc);
+            \draw[doubt, dashed] (c) to[bend right] (Ac);
+        \end{tikzpicture}
+    \end{center}
+
+    \caption{Some events related to the \aclp{SM} of \cref{running.example}. The circle nodes are \aclp{TC} and shaded nodes are \aclp{SM}. Solid lines represent relations with the \acp{SM} and dashed lines relations between other events. The  set of events contained in all \aclp{SM}, denoted by $\emptyevent$, is empty in this example.}
+    \label{fig:running.example}
+\end{figure}
+
+The diagram in \cref{fig:running.example} illustrates the problem of extending probabilities from \aclp{TC} to \aclp{SM} and then to general events in an \emph{edge-wise} process, where the value in a node is defined from the values in its neighbors. This quickly leads to coherence problems concerning probability, with no clear systematic approach. Notice that $bc$ is not directly related with any \acl{SM} therefore propagating values through edges would assign a hard to justify ($\not= 0$) value to $bc$. Instead, we propose to base the extension in the relation an event has with the \aclp{SM}.
+%
+%
+%
+\subsection{An Equivalence Relation}\label{subsec:equivalence.relation}
+%
+%
+%
+\begin{figure}[t]
+    \begin{center}
+        \begin{tikzpicture}
+            \node[event] (E) {$\emptyevent$};
+            \node[tchoice, above left = of E] (a) {$a$};
+            \node[smodel, above left = of a] (ab) {$ab$};
+            \node[smodel, above right = of a] (ac) {$ac$};
+            \node[event, below = of ab] (b) {$b$};
+            \node[event, below = of ac] (c) {$c$};
+            \node[event, above right = of ab] (abc) {$abc$};
+            \node[event, above left = of ab] (abC) {$\co{c}ab$};
+            \node[event, above right = of ac] (aBc) {$\co{b}ac$};
+            \node[indep, right = of ac] (bc) {$bc$};
+            \node[tchoice, smodel, below right = of bc] (A) {$\co{a}$};
+            \node[event, above = of A] (Ac) {$\co{a}c$};
+            \node[event, above right = of Ac] (Abc) {$\co{a}bc$};
+            % ----
+            \path[draw, rounded corners, pattern=north west lines, opacity=0.2]
+            (ab.west) --
+            (ab.north west) --
+            %
+            (abC.south west) --
+            (abC.north west) --
+            (abC.north) --
+            %
+            (abc.north east) --
+            (abc.east) --
+            (abc.south east) --
+            %
+            (ab.north east) --
+            (ab.east) --
+            (ab.south east) --
+            %
+            (a.north east) --
+            %
+            (E.north east) --
+            (E.east) --
+            (E.south east) --
+            (E.south) --
+            (E.south west) --
+            %
+            (b.south west) --
+            %
+            (ab.west)
+            ;
+            % ----
+            \path[draw, rounded corners, pattern=north east lines, opacity=0.2]
+            (ac.south west) --
+            (ac.west) --
+            (ac.north west) --
+            %
+            (abc.south west) --
+            (abc.west) --
+            (abc.north west) --
+            %
+            (aBc.north east) --
+            (aBc.east) --
+            (aBc.south east) --
+            %
+            (ac.north east) --
+            %
+            (c.east) --
+            %
+            (E.east) --
+            (E.south east) --
+            (E.south) --
+            (E.south west) --
+            %
+            (a.south west) --
+            (a.west) --
+            (a.north west) --
+            (a.north) --
+            %
+            (ac.south west)
+            ;
+            % ----
+            \path[draw, rounded corners, pattern=horizontal lines, opacity=0.2]
+            % (A.north west) --
+            %
+            (Ac.north west) --
+            %
+            (Abc.north west) --
+            (Abc.north) --
+            (Abc.north east) --
+            (Abc.south east) --
+            %
+            % (Ac.north east) --
+            % (Ac.east) --
+            %
+            % (A.east) --
+            (A.south east) --
+            %
+            (E.south east) --
+            (E.south) --
+            (E.south west) --
+            (E.west) --
+            (E.north west) --
+            %
+            (Ac.north west)
+            ;
+        \end{tikzpicture}
+    \end{center}
+
+    \caption{Classes (of consistent events) related to the \aclp{SM} of \cref{running.example} are defined through intersections and inclusions. In this picture we can see, for example, the classes $\set{\co{c}ab, ab, b}$ and $\set{a, abc}$. Different fillings correspond to different classes and, as before, the circle nodes are \aclp{TC} and shaded nodes are \aclp{SM}. Notice that $bc$ is not in a ``filled'' area.}
+    \label{fig:running.example.classes}
+\end{figure}
+
+Given an ASP program, we consider a set of \emph{atoms} $ \fml{A}$, the set $\fml{L}$ of the \emph{literals} over \fml{A}, and the set of \emph{events} $\fml{E}$ such that $e \in \fml{E} \iff e \subseteq \fml{L}$. We also consider $\fml{W}$ the set of \emph{worlds} (consistent events), 
+%\note{Be more precise on this definition} 
+a set of \emph{\aclp{TC}} $\fml{T}$ such that for every $a \in \fml{A}$ we have $a \in t$ or $\neg a \in t$
+%\note{Shouldn't it be $a \in t$ or $\neg a \in t$???}
+, and $\fml{S}$ the set of \emph{\aclp{SM}} such that $ \fml{S}\subset\fml{W}$. At last, the set of \aclp{SM} entailed by the \acl{TC} $t$ is denoted by $\tcgen{t}$.
+
+Our path to extend probabilities starts with a perspective of \aclp{SM} as playing a role similar to \emph{prime factors}.  The \aclp{SM} of a program are the irreducible events entailed from that program and any event must be considered under its relation with the \aclp{SM}.
+
+From  \cref{running.example}, consider the \acp{SM} $\co{a}, ab, ac$ and events $a, abc$ and $c$. While $a$ is related with (contained in) with both $ab, ac$, event $c$ is related only with $ac$. So, $a$ and $c$ are related with different \acp{SM}. On the other hand, both $ab, ac$ are related with $abc$. So $a$ and $abc$ are related with the same \aclp{SM}.
+
+\begin{definition}\label{def:stable.core}
+    The \emph{\ac{SC}} of the event $e\in \fml{E}$ is
+    \begin{equation}
+        \stablecore{e} := \set{s \in \fml{S} \given s \subseteq e \vee e \subseteq s}. \label{eq:stable.core}
+    \end{equation}
+    where $\fml{S}$ is the set of \aclp{SM}.
+\end{definition}
+
+We now define an equivalence relation so that two events are related if either both are inconsistent or both are consistent and, in the latter case, with the same \acl{SC}.
+
+\begin{definition}\label{def:equiv.rel}
+    For a given program, let $u, v \in \fml{E}$. The equivalence relation $\sim$ is defined by
+    \begin{equation}
+        u \sim v :\!\iff u,v \not\in\fml{W} \vee \del{u,v \in \fml{W} \wedge \stablecore{u} = \stablecore{v}}.\label{eq:equiv.rel}
+    \end{equation}
+\end{definition}
+
+Observe that the minimality of \aclp{SM} implies that, in \cref{def:stable.core}, either $e$ is a \acl{SM} or at least one of $\exists s \del{s \subseteq e}, \exists s \del{e \subseteq s}$ is false. This equivalence relation defines a partition on the set of events, where each class holds a unique relation with the \aclp{SM}. In particular we denote each class by:
+
+\begin{equation}
+    \class{e} =
+    \begin{cases}
+        \inconsistent := \fml{E} \setminus \fml{W}
+         & \text{if~} e \in \fml{E} \setminus \fml{W}, \\
+        \set{u \in \fml{W} \given \stablecore{u} = \stablecore{e}}
+         & \text{if~} e \in \fml{W}.
+    \end{cases}\label{eq:event.class}
+\end{equation}
+
+The combinations of the \aclp{SM}, together with the set of inconsistent events $\inconsistent$, form a set of representatives. Consider again \cref{running.example}. As previously mentioned, the \aclp{SM} are the elements of $\fml{S} = \set{\co{a}, ab, ac}$ so the quotient set of this relation is
+\begin{equation}
+    \class{\fml{E}} = \set{
+        \inconsistent,
+        \indepclass,
+        \class{\co{a}},
+        \class{ab},
+        \class{ac},
+        \class{\co{a}, ab},
+        \class{\co{a}, ac},
+        \class{ab, ac},
+        \class{\co{a}, ab, ac}
+    },
+\end{equation}
+where $\indepclass$ denotes, with abuse of notation, both the class of \emph{independent} events $e$ such that $\stablecore{e} = \emptyset$ and its core and $\emptyevent$ is the set of events contained in all \acp{SM}. We have:
+%\note{Remark the odd nature of $\emptyevent$.}
+
+\begin{equation*}
+    \begin{array}{l|lr}
+        \text{\textbf{Core}}, \stablecore{e}
+         & \text{\textbf{Class}}, \class{e}
+         & \text{\textbf{Size}}, \# \class{e}                                                 \\
+        \hline
+        %
+        \inconsistent
+         & \co{a}a, \ldots
+         & 37
+        \\
+        %
+        \indepclass
+         & \co{b}, \co{c}, bc, \co{b}a, \co{b}c, \co{bc}, \co{c}a, \co{c}b, \co{bc}a
+         & 9
+        \\
+        %
+        \co{a}
+         & \co{a}, \co{a}b, \co{a}c, \co{ab}, \co{ac}, \co{a}bc, \co{ac}b, \co{ab}c, \co{abc}
+         & 9
+        \\
+        %
+        ab
+         & b, ab, \co{c}ab
+         & 3
+        \\
+        %
+        ac
+         & c, ac, \co{b}ac
+         & 3
+        \\
+        %
+        \co{a}, ab
+         & \emptyset
+         & 0
+        \\
+        %
+        \co{a}, ac
+         & \emptyset
+         & 0
+        %
+        \\
+        %
+        ab, ac
+         & a, abc
+         & 2
+        \\
+        %
+        \co{a}, ab, ac
+         & \emptyevent
+         & 1
+        \\
+        %
+        \hline
+        \class{\fml{E}}
+         & \fml{E}
+         & 64
+    \end{array}
+\end{equation*}
+
+ Since all events within an equivalence class are in relation with a specific set of \aclp{SM}, \emph{measures, including probability, should be constant within classes}:
+          \[
+              \forall u\in \class{e} \left(\mu\at{u} = \mu\at{e} \right).
+          \]
+          
+     In general, we have \emph{much more} \aclp{SM} than literals but their combinations are still \emph{much less} than events. Nevertheless, the equivalence classes allow us to propagate probabilities from \aclp{TC} to events, as explained in the next subsection.
+          
+    In this specific case, instead of dealing with $64 = 2^6$ events, we consider only the $9 = 2^3 + 1$ classes, well defined in terms of combinations of the \aclp{SM}.
+
+%
+%
+%
+\subsection{From Total Choices to Events}\label{subsec:from.tchoices.to.events}
+%
+%
+%
+Our path to set a distribution on $\fml{E}$ starts with the more general problem of extending \emph{measures}, since extending \emph{probabilities} easily follows by means of a suitable normalization (done in \eqref{eq:measure.events.unconditional} and \eqref{eq:probability.event}), and has two phases:
+\begin{enumerate}
+    \item Extension of the probabilities, \emph{as measures}, from the \aclp{TC} to events.
+    \item Normalization of the measures on events, recovering a probability.
+\end{enumerate}
+
+The ``extension'' phase, traced by \cref{eq:prob.total.choice} and eqs.\ \eqref{eq:measure.tchoice} to \eqref{eq:measure.events}, starts with the measure (probability) of \aclp{TC}, $\pw{t} = \pr{T = t}$, expands it to \aclp{SM}, $\pw{s}$, and then, within the equivalence relation from \cref{eq:equiv.rel}, to (general) events, $\pw{e}$, including (consistent) worlds.
+
+\begin{description}
+    %
+    \item[Total Choices.] Using \cref{eq:prob.total.choice}, this case is given by
+          \begin{equation}
+              \pwc{t} := \pr{T = t}= \prod_{p\in P_t} p.
+              \label{eq:measure.tchoice}
+          \end{equation}
+          %
+
+    \item[Stable Models.] Recall that each \acl{TC} $t$, together with the rules and the other facts of a program, defines the set \tcgen{t} of \aclp{SM} associated with that choice.
+            Given a \acl{TC} $t$, a \acl{SM} $s$, and variables or values $\theta_{s,t} \in \intcc{0, 1}$ such that $\sum_{s\in \tcgen{t}} \theta_{s,t} = 1$, we define
+          \begin{equation}
+              \pw{s, t} := \begin{cases}
+                  \theta_{s,t} & \text{if~} s \in \tcgen{t}\cr
+                  0            & \text{otherwise.}
+              \end{cases}
+              \label{eq:measure.stablemodel}
+          \end{equation}
+
+          %
+
+    \item[Classes.] \label{item:class.cases} Each class is either the inconsistent class, $\inconsistent$, or is represented by some set of \aclp{SM}.
+          \begin{description}
+              \item[Inconsistent Class.] The inconsistent class contains events that are logically inconsistent, thus should never be observed and have measure zero:
+                    \begin{equation}
+                        \pw{\inconsistent, t} := 0.\footnote{Notice that this measure being equal to zero is actually independent of the \acl{TC}.}
+                        \label{eq:measure.class.inconsistent}
+                    \end{equation}
+              \item[Independent Class.] A world that neither contains nor is contained in a \acl{SM} corresponds to a non-state, according to the program. So the respective measure is also set to zero:
+                    \begin{equation}
+                        \pw{\indepclass, t} := 0.
+                        \label{eq:measure.class.independent}
+                    \end{equation}
+              \item[Other Classes.] The extension must be constant within a class, its value should result from the elements in the \acl{SC}, and respects assumption \ref{assumption:smodels.disjoint} (\aclp{SM} are disjoint):
+                    \begin{equation}
+                        \pw{\class{e}, t} := \pw{\stablecore{e}, t} = \sum_{s\in\stablecore{e}}\pw{s, t}
+                        \label{eq:measure.class.other}
+                    \end{equation}
+                    and
+                    \begin{equation}
+                        \pw{\class{e}} := \sum_{t \in \fml{T}} \pw{\class{e}, t}\pwc{t}.
+                        \label{eq:measure.class.unconditional}
+                    \end{equation}
+          \end{description}
+          %
+
+    \item[Events.] \label{item:event.cases} Each (general) event $e$ is in the class defined by its \acl{SC}, $\stablecore{e}$. So, denoting by $\# X$ the number of elements in $X$, we set:
+          \begin{equation}
+              \pw{e, t} :=
+              \begin{cases}
+                  \frac{\pw{\class{e}, t}}{\# \class{e}} & \text{if~}\# \class{e} > 0, \\
+                  0                                      & \text{otherwise}.
+              \end{cases}
+              \label{eq:measure.events}
+          \end{equation}
+          and
+          \begin{equation}
+              \pw{e} := \sum_{t\in\fml{T}} \pw{e, t} \pwc{t}.
+              \label{eq:measure.events.unconditional}
+          \end{equation}
+\end{description}
+
+
+
+The $\theta_{s,t}$ parameters in equation \eqref{eq:measure.stablemodel} express the \emph{program's} lack of knowledge about the measure assignment, when a single \acl{TC} entails more than one \acl{SM}. In that case, how to distribute the respective measures? Our proposal to address this problem consists in assigning an unknown measure, $\theta_{s,t}$, conditional on the \acl{TC}, $t$, to each \acl{SM} $s$. This approach allows the expression of an unknown quantity and future estimation, given observed data.
+% Consider the event $bc$ from \cref{running.example}. Since $\class{bc} = \indepclass$, from \cref{eq:measure.class.independent} we get $\mu\at{bc} = 0$. data.
+
+% SUPERSET
+Equation \eqref{eq:measure.class.other} results from assumption \ref{assumption:smodels.disjoint} and states that the measure of a class $\class{e}$ is the sum over it's \acl{SC}, $\stablecore{e}$, and \eqref{eq:measure.class.unconditional} \emph{marginalizes} the \acp{TC} on \eqref{eq:measure.class.other}.
+
+The \emph{normalizing factor} is:
+\begin{equation*}
+    Z :=
+    \sum_{e \in \fml{E}} \pw{e} =
+    \sum_{\class{e} \in \class{\fml{E}}} \pw{\class{e}},
+\end{equation*}
+
+and now equation \eqref{eq:measure.events.unconditional} provides a straightforward way to define the \emph{probability of observation of a single event}:
+
+\begin{equation}
+    \pr{E = e} := \frac{\pw{e}}{Z}.\label{eq:probability.event}
+\end{equation}
+
+Equation \eqref{eq:measure.events.unconditional} together with external statistical knowledge, can be used to learn about the \emph{initial} probabilities of the atoms, that should not (and by \cref{prop:two.distributions} can't) be confused with the explicit $\pwcfname$ set in the program.
+
+It is now straightforward to check that $\pr{E}$ satisfies the Kolmogorov axioms of probability.
+
+Since \aclp{TC} are also events, one can ask, for an arbitrary \aclp{TC}  $t$, if $\pr{T = t} = \pr{E = t}$ or, equivalently, if $\pwc{t} = \pw{t}$.  However, it is easy to see that, in general, that cannot be true. While the domain of the random variable $T$ is the set of \aclp{TC}, for $E$ the domain is much larger, including all the events. Except for trivial programs, where the \acp{SM} are the \acp{TC}, some events other than \aclp{TC} have non-zero probability.
+
+\begin{proposition} \label{prop:two.distributions}
+    In a program with a \acl{SM} that is not a \acl{TC} there is at least one $t\in\fml{T}$ such that:
+    \begin{equation}
+        \pr{T = t} \not= \pr{E = t}. \label{eq:two.distributions}
+    \end{equation}
+\end{proposition}
+
+\begin{proof}
+    Suppose towards a contradiction that $\pr{T = t} = \pr{E = t}$ for all $t \in \fml{T}$.  Then
+    $$
+        \sum_{t\in\fml{T}} \pr{E = t} = \sum_{t\in\fml{T}} \pr{T = t} = 1.
+    $$
+
+    Hence $\pr{E = x} = 0$ for all $x \in \fml{E}\setminus\fml{T}$, in contradiction with the fact that for at least one $s \in \fml{S}\setminus\fml{T}$ one has $\pr{E = s} > 0$.
+\end{proof}
+
+The essential conclusion of \cref{prop:two.distributions} is that we are dealing with \emph{two distributions}: one, on the \acp{TC}, explicit in the annotations of the programs and another one, on the events, and entailed by the explicit annotations \emph{and the structure of the \aclp{SM}}.
+
+%
+%
+%
+\section{Developed Examples}\label{sec:developed.examples}
+%
+%
+%
+Here we apply the methods from \cref{sec:extending.probalilities} to \cref{running.example} and to a well known bayesian network: the Earthquake, Burglar, Alarm problem.
+
+\subsection{The SBF Example}\label{subsec:sbf.example}
+
+We continue with the program from \cref{eq:example.1}.
+
+\begin{description}
+    %    
+    \item[\Aclp{TC}.] The \aclp{TC}, and respective \aclp{SM}, are
+          %
+          \begin{center}
+              \begin{tabular}{ll|r}
+                  \textbf{\Acl{TC}} & \textbf{\Aclp{SM}} & \textbf{$\pwc{t}$} \\
+                  \hline
+                  $a$               & $ab, ac$           & $0.3$              \\
+                  $\co{a}$          & $\co{a}$           & $\co{0.3} = 0.7$
+              \end{tabular}
+          \end{center}
+          %
+
+    \item[\Aclp{SM}.] The $\theta_{s,t}$ parameters in this example are
+          $$
+              \begin{array}{l|cc}
+                  \theta_{s,t} & \co{a} & a           \\
+                  \hline
+                  \co{a}       & 1      & 0           \\
+                  ab           & 0      & \theta      \\
+                  ac           & 0      & \co{\theta}
+              \end{array}
+          $$
+          with $\theta \in \intcc{0, 1}$.
+
+    \item[Classes.] Following the definitions in \cref{eq:stable.core,eq:equiv.rel,eq:event.class,eq:measure.class.inconsistent,eq:measure.class.independent,eq:measure.class.other} we get the following quotient set (ignoring $\inconsistent$ and $\indepclass$), and measures:
+          \begin{equation*}
+              \begin{array}{l|ll|rr|r}
+                  \stablecore{e}
+                   & \pw{s, \co{a}}
+                   & \pw{s, a}
+                   & \pw{\class{e}, \co{a}}
+                   & \pw{\class{e}, a}
+                   & \pw{\class{e}}
+                  \\[2pt]
+                   & \co{a}, ab, ac
+                   & \co{a}, ab, ac
+                   & \pwcfname=0.7
+                   & \pwcfname=0.3
+                   &
+                  \\[2pt]
+                  \hline
+                  \co{a}
+                   & \boxed{1},0,0
+                   & \boxed{0},\theta, \co{\theta}
+                   & 1
+                   & 0
+                   & 0.7
+                  \\[2pt]
+                  %
+                  ab
+                   & 1,\boxed{0},0
+                   & 0,\boxed{\theta}, \co{\theta}
+                   & 0
+                   & \theta
+                   & 0.3\theta
+                  \\[2pt]
+                  %
+                  ac
+                   & 1,0,\boxed{0}
+                   & 0,\theta, \boxed{\co{\theta}}
+                   & 0
+                   & \co{\theta}
+                   & 0.3\co{\theta}
+                  \\[2pt]
+                  %
+                  \co{a}, ab
+                   & \boxed{1},\boxed{0},0
+                   & \boxed{0},\boxed{\theta}, \co{\theta}
+                   & 1
+                   & \theta
+                   & 0.7 + 0.3\theta
+                  \\[2pt]
+                  %
+                  \co{a}, ac
+                   & \boxed{1},0,\boxed{0}
+                   & \boxed{0},\theta, \boxed{\co{\theta}}
+                   & 1
+                   & \co{\theta}
+                   & 0.7 + 0.3\co{\theta}
+                  \\[2pt]
+                  %
+                  ab, ac
+                   & 1,\boxed{0},\boxed{0}
+                   & 0,\boxed{\theta}, \boxed{\co{\theta}}
+                   & 0
+                   & \theta + \co{\theta} = 1
+                   & 0.3
+                  \\[2pt]
+                  %
+                  \co{a}, ab, ac
+                   & \boxed{1},\boxed{0},\boxed{0}
+                   & \boxed{0},\boxed{\theta}, \boxed{\co{\theta}}
+                   & 1
+                   & \theta + \co{\theta} = 1
+                   & 1
+              \end{array}
+          \end{equation*}
+
+    \item[Prior Distributions.] Following the above values (in rational form), and considering the inconsistent and independent classes (resp. $\inconsistent, \indepclass$):
+          \begin{equation*}
+              \begin{array}{lr|cc|cc}
+                  \stablecore{e}
+                   & \# \class{e}
+                   & \pw{\class{e}}
+                   & \pw{e}
+                   & \pr{E = e}
+                   & \pr{E \in \class{e}}
+                  \\
+                  \hline
+                  %
+                  \inconsistent
+                   & 37
+                   & 0
+                   & 0
+                   & 0
+                   & 0
+                  \\[4pt]
+                  %
+                  \indepclass
+                   & 9
+                   & 0
+                   & 0
+                   & 0
+                   & 0
+                  \\[4pt]
+                  %
+                  \co{a}
+                   & 9
+                   & \frac{7}{10}
+                   & \frac{7}{90}
+                   & \frac{7}{207}
+                   & \frac{7}{23}
+                  \\[4pt]
+                  %
+                  ab
+                   & 3
+                   & \frac{3}{10}\theta
+                   & \frac{1}{10}\theta
+                   & \frac{1}{23}\theta
+                   & \frac{3}{23}\theta
+                  \\[4pt]
+                  %
+                  ac
+                   & 3
+                   & \frac{3}{10}\co{\theta}
+                   & \frac{1}{10}\co{\theta}
+                   & \frac{1}{23}\co{\theta}
+                   & \frac{3}{23}\co{\theta}
+                  \\[4pt]
+                  %
+                  \co{a}, ab
+                   & 0
+                   & \frac{7 + 3\theta}{10}
+                   & 0
+                   & 0
+                   & 0
+                  \\[4pt]
+                  %
+                  \co{a}, ac
+                   & 0
+                   & \frac{7 + 3\co{\theta}}{10}
+                   & 0
+                   & 0
+                   & 0
+                  %
+                  \\[4pt]
+                  %
+                  ab, ac
+                   & 2
+                   & \frac{3}{10}
+                   & \frac{3}{20}
+                   & \frac{3}{46}
+                   & \frac{3}{23}
+                  \\[4pt]
+                  %
+                  \co{a}, ab, ac
+                   & 1
+                   & 1
+                   & 1
+                   & \frac{10}{23}
+                   & \frac{10}{23}
+                  \\[4pt]
+                  %
+                  \hline
+                   &
+                   &
+                   & Z = \frac{23}{10}
+                   &
+                  %& \Sigma = 1
+              \end{array}
+          \end{equation*}
+\end{description}
+
+So the prior distributions, denoted by the random variable $E$, of events and classes are:
+
+\begin{equation}
+    \begin{array}{l|ccccccccc}
+        \stablecore{e}          &
+        \inconsistent           &
+        \indepclass             &
+        \co{a}                  &
+        ab                      &
+        ac                      &
+        \co{a}, ab              &
+        \co{a}, ac              &
+        ab, ac                  &
+        \co{a}, ab, ac
+        \\ \hline\\[-12pt]
+
+        \pr{E = e}              &
+        0                       &
+        0                       &
+        \frac{7}{207}           &
+        \frac{1}{23}\theta      &
+        \frac{1}{23}\co{\theta} &
+        0                       &
+        0                       &
+        \frac{3}{46}            &
+        \frac{10}{23}
+        \\[4pt]
+
+        \pr{E \in \class{e}}    &
+        0                       &
+        0                       &
+        \frac{7}{23}            &
+        \frac{3}{23}\theta      &
+        \frac{3}{23}\co{\theta} &
+        0                       &
+        0                       &
+        \frac{3}{23}            &
+        \frac{10}{23}
+    \end{array}\label{eq:sbf.prior}
+\end{equation}
+%
+%
+%
+\subsubsection*{Testing the Prior Distributions}
+%
+%
+%
+These results can be \emph{tested by simulation} in a two-step process, where (1) a ``system'' is \emph{simulated}, to gather some ``observations'' and then (2) empirical distributions from those samples are \emph{related} with the prior distributions from \cref{eq:sbf.prior}. \Cref{tab:sbf.example,tab:sbf.examples.2.3} summarize some of those tests, where datasets of $n = 1000$ observations are generated and analyzed.
+
+\bigskip\noindent\textbf{Simulating a System.} Following some criteria, more or less related to the given program, a set of events, that represent observations, is generated. Possible simulation procedures include:
+\begin{itemize}
+    %
+    \item \emph{Random.} Each sample is a \ac{RSL}. Additional sub-criteria may require, for example, consistent events, a \ac{RCE} simulation.
+          %
+    \item \emph{Model+Noise.} Gibbs' sampling \cite{geman84} tries to replicate the program model and also to add some noise. For example, let $\alpha, \beta, \gamma \in \intcc{0,1}$ be some parameters to control the sample generation. The first parameter, $\alpha$ is the ``out of model'' samples ratio; $\beta$ represents the choice $a$ or $\co{a}$ (explicit in the model) and $\gamma$ is the simulation representation of $\theta$. A single sample is then generated following the probabilistic choices below:
+          $$
+              \begin{cases}
+                  \alpha & \text{by \ac{RCE}} \\%[-2pt]
+                         &
+                  \begin{cases}
+                      \beta & \co{a} \\%[-2pt]
+                            &
+                      \begin{cases}
+                          \gamma & ab \\%[-2pt]
+                                 & ac
+                      \end{cases}
+                  \end{cases}
+              \end{cases},
+          $$
+          where
+          $$
+              \begin{cases}
+                  p & x \\%[-4pt]
+                    & y
+              \end{cases}
+          $$
+          denotes ``\emph{the value of $x$ with probability $p$, otherwise $y$}'' --- notice that $y$ might entail $x$ and \emph{vice-versa}: E.g.\ some $ab$ can be generated in the \ac{RCE}.
+    \item \emph{Other Processes.} Besides the two sample generations procedures above, any other processes and variations can be used. For example, requiring that one of $x, \co{x}$ literals is always in a sample or using specific distributions to guide the sampling of literals or events.
+\end{itemize}
+
+\noindent\textbf{Relating the Empirical and the Prior Distributions.} The data from the simulated observations is used to test the prior distribution. Consider the prior, $\pr{E}$, and the empirical, $\pr{S}$, distributions and the following error function:
+\begin{equation}
+    \err{\theta} := \sum_{e\in\fml{E}} \del{\pr{E = e} - \pr{S = e}}^2.\label{eq:err.e.s}
+\end{equation}
+
+Since $E$ depends on $\theta$, one can ask how does the error varies with $\theta$, what is  the \emph{optimal} (i.e.\ minimum) error value
+          \begin{equation}
+              \hat{\theta} := \arg\min_\theta \err{\theta}\label{eq:opt.err}
+          \end{equation}
+          and what does it tell us about the program.
+
+
+\begin{table}
+    \begin{center}
+        $$
+            \begin{array}{l|cc|c}
+                \stablecore{e}
+                 & \#\set{S \in \class{e}}
+                 & \pr{S \in \class{e}}
+                 & \pr{E \in \class{e}}
+                \\
+                \hline
+                %
+                \inconsistent
+                 & 0
+                 & 0
+                 & 0
+                \\[2pt]
+                %
+                \indepclass
+                 & 24
+                 & \frac{24}{1000}
+                 & 0
+                \\[2pt]
+                %
+                \co{a}
+                 & 647
+                 & \frac{647}{1000}
+                 & \frac{7}{23}
+                \\[2pt]
+                %
+                ab
+                 & 66
+                 & \frac{66}{1000}
+                 & \frac{3}{23}\theta
+                \\[2pt]
+                %
+                ac
+                 & 231
+                 & \frac{231}{1000}
+                 & \frac{3}{23}\co{\theta}
+                \\[2pt]
+                %
+                \co{a}, ab
+                 & 0
+                 & 0
+                 & 0
+                \\[2pt]
+                %
+                \co{a}, ac
+                 & 0
+                 & 0
+                 & 0
+                %
+                \\[2pt]
+                %
+                ab, ac
+                 & 7
+                 & \frac{7}{1000}
+                 & \frac{3}{23}
+                \\[2pt]
+                %
+                \co{a}, ab, ac
+                 & 25
+                 & \frac{25}{1000}
+                 & \frac{10}{23}
+                \\[2pt]
+                \hline
+                 & n = 1000
+            \end{array}
+        $$
+    \end{center}
+
+    \caption{\emph{Experiment 1.} Results from an experiment where $n=1000$ samples where generated following the \emph{Model+Noise} procedure with parameters $\alpha = 0.1, \beta = 0.3, \gamma = 0.2$. The \emph{empirical} distribution is represented by the random variable $S$ while the \emph{prior}, as before, is denoted by $E$.}\label{tab:sbf.example}
+\end{table}
+
+In order to illustrate this analysis, consider the experiment summarized in \cref{tab:sbf.example}:
+
+\begin{enumerate}
+    \item Equation \eqref{eq:err.e.s} becomes
+          $$
+              \err{\theta} = \frac{20869963}{66125000} + \frac{477}{52900}\theta + \frac{18}{529}\theta^2.
+          $$
+    \item The minimum of $\err{\theta}$ is at $\frac{477}{52900} + 2\frac{18}{529}\theta = 0$. Since this value is negative and $\theta \in \intcc{0,1}$, it must be $\hat{\theta} = 0$, and
+          $$
+              \err{\hat{\theta}} = \frac{20869963}{66125000} \approx 0.31561.
+          $$
+\end{enumerate}
+
+The parameters $\alpha, \beta, \gamma$ of that experiment favour $ac$ over $ab$. In particular, setting $\gamma = 0.2$ means that in the simulation process, choices between $ab$ and $ac$ favour $ac$, 4 to 1. For completeness sake, we also describe one experiment that favours $ab$ over $ac$ (setting $\gamma=0.8$) and one balanced ($\gamma=0.5$).
+
+\begin{description}
+    \item[For $\gamma=0.8$,] the error function is
+          \begin{equation*}
+              \err{\theta} = \frac{188207311}{529000000} - \frac{21903}{264500} \theta + \frac{18}{529} \theta^{2} \approx 0.35579 - 0.08281 \theta + 0.03403 \theta ^2
+          \end{equation*}
+          and, with $\theta\in\intcc{0, 1}$ the minimum is at $-0.08281 + 0.06805 \theta = 0$, \emph{i.e.}:
+          \begin{eqnarray*}
+              \hat{\theta} :              \frac{0.08281}{0.06805} \approx 1.21683& >1. &\text{So,~} \hat{\theta} = 1, \\
+              \err{\hat{\theta}} \approx  0.30699&.
+          \end{eqnarray*}
+
+    \item[For $\gamma=0.5$,] the error function is
+          \begin{equation*}
+              \err{\theta} = \frac{10217413}{33062500} - \frac{2181}{66125} \theta + \frac{18}{529} \theta^{2}\approx 0.30903 - 0.03298 \theta + 0.03402 \theta ^2
+          \end{equation*}
+          and, with $\theta\in\intcc{0, 1}$ the minimum is at $-0.03298 + 0.06804 \theta = 0$, \emph{i.e.}:
+          \begin{eqnarray*}
+              \hat{\theta}        &\approx &
+              \frac{0.03298}{0.06804}
+              \approx 0.48471
+              \approx \frac{1}{2}, \\
+              \err{\hat{\theta}}  &\approx &
+              0.30104
+          \end{eqnarray*}
+
+\end{description}
+
+\begin{table}
+    \begin{center}
+        $$
+            \begin{array}{l|ccc}
+                \stablecore{e}
+                 & \#\set{S_{0.2} \in \class{e}}
+                 & \#\set{S_{0.8} \in \class{e}}
+                 & \#\set{S_{0.5} \in \class{e}}
+                \\
+                \hline
+                %
+                \inconsistent
+                 & 0
+                 & 0
+                 & 0
+                \\[2pt]
+                %
+                \indepclass
+                 & 24
+                 & 28
+                 & 23
+                \\[2pt]
+                %
+                \co{a}
+                 & 647
+                 & 632
+                 & 614
+                \\[2pt]
+                %
+                ab
+                 & 66
+                 & 246
+                 & 165
+                \\[2pt]
+                %
+                ac
+                 & 231
+                 & 59
+                 & 169
+                \\[2pt]
+                %
+                \co{a}, ab
+                 & 0
+                 & 0
+                 & 0
+                \\[2pt]
+                %
+                \co{a}, ac
+                 & 0
+                 & 0
+                 & 0
+                %
+                \\[2pt]
+                %
+                ab, ac
+                 & 7
+                 & 8
+                 & 4
+                \\[2pt]
+                %
+                \co{a}, ab, ac
+                 & 25
+                 & 27
+                 & 25
+            \end{array}
+        $$
+    \end{center}
+
+    \caption{\emph{Experiments 2 and 3.} Results from experiments, each with $n=1000$ samples generated following the \emph{Model+Noise} procedure, with parameters $\alpha = 0.1, \beta = 0.3, \gamma = 0.8$ (Experiment 2) and $\gamma=0.5$ (Experiment 3). Empirical distributions are represented by the random variables $S_{0.8}$ and $S_{0.5}$ respectively. Data from experience \cref{tab:sbf.example} is also included, and denoted by $S_{0.2}$, to provide reference.}\label{tab:sbf.examples.2.3}
+\end{table}
+
+%\oldnote{under- and over- estimation}
+These experiments show that data can indeed be used to estimate the parameters of the model. However, we observe that the estimated $\hat{\theta}$ has a tendency to  over- or under- estimate the $\theta$ used to generate the samples. More precisely, in experiment \ref{tab:sbf.example} data is generated with $\gamma = 0.2$ (the surrogate of $\theta$) which is under-estimated with $\hat{\theta} = 0$ while in experiment 2, $\gamma = 0.8$ leads the over-estimation $\hat{\theta} = 1$. This suggests that we might need to refine the error estimation process. However, experiment 3 data results from $\gamma = 0.5$ and we've got $\hat{\theta} \approx 0.48471 \approx 0.5$, which is more in line with what is to be expected.
+%
+%
+%
+\subsection{An Example Involving Bayesian Networks}\label{subsec:example.bayesian.networks}
+%
+%
+%
+As it turns out, our framework is suitable to deal with more sophisticated cases, in particular cases involving bayesian networks. In order to illustrate this, in this section we see how the classical example of the Burglary, Earthquake, Alarm \cite{Judea88} works in our setting. This example is a commonly used example in bayesian networks because it illustrates reasoning under uncertainty.  The gist of the example is given in \cref{Figure_Alarm}. It involves a simple network of events and conditional probabilities.
+
+The events are: Burglary ($B$), Earthquake ($E$), Alarm ($A$), Mary calls ($M$) and John calls ($J$). The initial events $B$ and $E$ are assumed to be independent events that occur with probabilities $\pr{B}$ and $\pr{E}$, respectively. There is an alarm system that can be triggered by either of the initial events $B$ and $E$. The probability of the alarm going off is a conditional probability given that $B$ and $E$ have occurred. One denotes these probabilities, as per usual,  by $\pr{A \given B}$, and $\pr{A \given E}$. There are two neighbors, Mary and John who have agreed to call if they hear the alarm. The probability that they do actually call is also a conditional probability denoted by $\pr{M \given A}$ and $\pr{J \given A}$, respectively.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[node distance=2.5cm]
+
+            % Nodes
+            \node[smodel, circle] (A) {A};
+            \node[tchoice, above right of=A] (B) {B};
+            \node[tchoice, above left of=A] (E) {E};
+            \node[tchoice, below left of=A] (M) {M};
+            \node[tchoice, below right of=A] (J) {J};
+
+            % Edges
+            \draw[->] (B) to[bend left] (A) node[right,xshift=1.1cm,yshift=0.8cm] {\footnotesize{$\pr{B}=0.001$}} ;
+            \draw[->] (E) to[bend right] (A) node[left, xshift=-1.4cm,yshift=0.8cm] {\footnotesize{$\pr{E}=0.002$}} ;
+            \draw[->] (A) to[bend right] (M) node[left,xshift=0.2cm,yshift=0.7cm] {\footnotesize{$\pr{M \given A}$}};
+            \draw[->] (A) to[bend left] (J) node[right,xshift=-0.2cm,yshift=0.7cm] {\footnotesize{$\pr{J \given A}$}} ;
+        \end{tikzpicture}
+    \end{center}
+
+    \begin{multicols}{3}
+
+        \footnotesize{
+            \begin{equation*}
+                \begin{split}
+                    &\pr{M \given A}\\
+                    &  \begin{array}{c|cc}
+                               & m    & \neg m \\
+                        \hline
+                        a      & 0.9  & 0.1    \\
+                        \neg a & 0.05 & 0.95
+                    \end{array}
+                \end{split}
+            \end{equation*}
+        }
+
+        \footnotesize{
+            \begin{equation*}
+                \begin{split}
+                    &\pr{J \given A}\\
+                    &  \begin{array}{c|cc}
+                               & j    & \neg j \\
+                        \hline
+                        a      & 0.7  & 0.3    \\
+                        \neg a & 0.01 & 0.99
+                    \end{array}
+                \end{split}
+            \end{equation*}
+        }
+        \footnotesize{
+            \begin{equation*}
+                \begin{split}
+                    \pr{A \given B \wedge E}\\
+                    \begin{array}{c|c|cc}
+                               &        & a     & \neg a \\
+                        \hline
+                        b      & e      & 0.95  & 0.05   \\
+                        b      & \neg e & 0.94  & 0.06   \\
+                        \neg b & e      & 0.29  & 0.71   \\
+                        \neg b & \neg e & 0.001 & 0.999
+                    \end{array}
+                \end{split}
+            \end{equation*}
+        }
+    \end{multicols}
+    \caption{The Earthquake, Burglary, Alarm model}
+    \label{Figure_Alarm}
+\end{figure}
+
+We follow the convention of representing the (upper case) random variable $X$ by the lower case $x$.
+%
+Considering the probabilities given in \cref{Figure_Alarm} we obtain the following spe\-ci\-fi\-ca\-tion:
+
+\begin{equation*}
+    \begin{aligned}
+        \probfact{0.001}{b} & ,\cr
+        \probfact{0.002}{e} & ,\cr
+    \end{aligned}
+    \label{eq:not_so_simple_example}
+\end{equation*}
+
+For the table giving the probability $\pr{M \given A}$ we obtain the program:
+
+\begin{equation*}
+    \begin{aligned}
+        \probfact{0.9}{\condsymb{m}{a}}       & ,\cr
+        \probfact{0.05}{\condsymb{m}{\co{a}}} & ,\cr
+        m                                     & \leftarrow a \wedge \condsymb{m}{a},\cr
+        m                                     & \leftarrow \neg a \wedge \condsymb{m}{\co{a}}.
+    \end{aligned}
+\end{equation*}
+
+The latter program can be simplified (abusing notation) by writing $\probrule{0.9}{m}{a}$ and $\probrule{0.05}{m}{\neg a}$.
+%\note{SPA: \emph{parece-me que pode ser feito assim, mas estritamente falando já não corresponde à forma inicialmente anunciada} --- ``abusing notation''}
+
+Similarly, for the probability $\pr{J \given A}$ we obtain
+
+\begin{equation*}
+    \begin{aligned}
+        \probrule{0.7}{j}{&a},      \\
+        \probrule{0.01}{j}{&\neg a},
+    \end{aligned}
+\end{equation*}
+
+Finally, for the probability $\pr{A \given B \wedge E}$ we obtain
+
+\begin{equation*}
+    \begin{aligned}
+        \probrule{0.95}{a}{b, e},      &  &  &
+        \probrule{0.94}{a}{b, \co{e}},\cr
+        \probrule{0.29}{a}{\co{b}, e}, &  &  &
+        \probrule{0.001}{a}{\co{b}, \co{e}}.
+    \end{aligned}
+\end{equation*}
+
+One can then proceed as in the previous subsection and analyze this example. The details of such analysis are not given here since they are analogous, albeit admittedly more cumbersome.
+%
+%
+%
+\section{Discussion and Future Work}
+%
+%
+%
+This work is a first venture into expressing probability distributions using algebraic expressions derived from a logical program, in particular an \ac{ASP}.
+We would like to point out that there is still much to explore concerning the full expressive power of logic programs and \ac{ASP} programs. So far, we have not considered recursion, logical variables or functional symbols. Also, there is still little effort to articulate with the  related fields, probabilistic logical programming, machine learning, inductive programming, \emph{etc.}
+
+The equivalence relation from \cref{def:equiv.rel} identifies the $s \subseteq e$ and $e \subseteq s$ cases. Relations that distinguish such cases might enable better relations between the models and processes from the \aclp{SM}.
+
+The example from \cref{subsec:example.bayesian.networks} shows that the theory, methodology, and tools, from bayesian networks can be adapted to our approach. The connection with Markov Fields \cite{kindermann80} is left for future work. An example of a ``program selection'' application (as mentioned in \cref{item:program.selection}, \cref{sec:example.1}) is also left for future work.
+
+%\oldnote{under- over- estimate}
+Related with the remark at the end of \cref{subsec:sbf.example}, on the tendency of $\hat{\theta}$ to under- or over- estimate $\theta$, notice that the error function in \eqref{eq:err.e.s} expresses only one of many possible ``distances'' between the empirical and prior distributions. Variations include normalizing this function by the size of $\fml{E}$ or using the \acl{KL} divergence. The key contribution of this function in this work is to find an optimal $\theta$. Moreover, further experiments, not included in this paper, with $\alpha = 0.0$, lead to $\hat{\theta} \approx \gamma$, \emph{i.e.}\ setting the prior noise to zero leads to full recovering $\theta$ from the observations.
+
+We decided to set the measure of inconsistent events to $0$ but, maybe, in some cases, we shouldn't. For example, since observations may be affected by noise, one can expect inconsistencies between the literals of an observation to occur.
+%
+%
+%
+\section*{Acknowledgements}
+%
+%
+%
+This work is supported by NOVALINCS (UIDB/04516/2020) with the financial support of FCT.IP.
+The third author acknowledges the support of FCT - Funda\c{c}\~ao para a Ci\^{e}ncia e Tecnologia under the project UIDP/04674/2020, and the research center CIMA -- Centro de Investigação em Matemática e Aplicações.
+
+The authors grateful to Lígia Henriques-Rodrigues, Matthias Knorr and Ricardo Gonçalves for valuable comments on a preliminary version of this paper, and Alice Martins for contributions on software.
+%
+%
+%
+\printbibliography
+%
+%
+%
+\end{document}

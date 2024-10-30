@@ -1,0 +1,191 @@
+
+\usepackage{multirow}
+
+% LNAI stuff
+
+% TLP stuff
+
+\usepackage{times}
+% \usepackage{soul} % to strikeout, highline, etc.
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\urlstyle{same}
+\usepackage[%textsize=tiny,
+    prependcaption]{todonotes}
+%
+
+% OUR PACKAGES AND MACROS
+
+
+\usepackage{tikz}
+\tikzset{
+    event/.style={},
+    smodel/.style={fill=gray!25},
+    tchoice/.style={draw, circle},
+    indep/.style={},
+    proptc/.style = {-latex, dashed},
+    propsm/.style = {-latex, thick},
+    doubt/.style = {gray} }
+\usetikzlibrary{calc, positioning, patterns, perspective}
+%
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue, }
+%
+\usepackage{commath}
+\newtheorem{assumption}{Assumption}
+\usepackage{amssymb}
+\usepackage[normalem]{ulem}
+\usepackage[euler-digits,euler-hat-accent]{eulervm}
+\usepackage[nice]{nicefrac}
+\usepackage{stmaryrd}
+\usepackage{acronym}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{cleveref}
+\crefname{example}{ex.}{exs.}
+\crefname{proposition}{prop.}{props.}
+\crefname{assumption}{asp.}{asps.}
+\usepackage{hyphenat}
+\hyphenation{
+mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
+}
+
+% Environments
+
+\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+% Commands
+
+\def\tight{%
+  \itemsep 0pt plus 1pt
+  \parskip 0pt plus 1pt}
+
+\newcommand{\eat}[1]{}
+\newcommand{\at}[1]{\ensuremath{\!\del{#1}}}        %   argument
+%
+%   Notation
+%
+%   special sets
+%
+\newcommand{\cla}[1]{\ensuremath{{\cal #1}}}        %   class of something  
+\newcommand{\clx}[1]{\ensuremath{{\mathbb{#1}}}}
+%
+%   connectives in logic programs
+%
+\newcommand{\conj}{\ensuremath{\wedge}} \newcommand{\disj}{\ensuremath{\vee}}
+\newcommand{\clause}{\ensuremath{\leftarrow}}
+\newcommand{\naf}{\ensuremath{\sim\!}}
+\newcommand{\co}[1]{\ensuremath{\overline{#1}}}     %   complement
+\renewcommand{\complement}{\ensuremath{\mathcal{C}}}     %   complement
+%
+%   often used sets
+%
+\newcommand{\ATOMSset}{\ensuremath{\cla{A}}}
+\newcommand{\LITERALSset}{\ensuremath{\cla{L}}}
+\newcommand{\PATOMset}{\ensuremath{\ATOMSset_{\cla{P}}}}
+\newcommand{\FACTSset}{\ensuremath{\cla{F}}}
+\newcommand{\PROBFset}{\ensuremath{\cla{P}}}
+\newcommand{\RULESset}{\ensuremath{\cla{R}}}
+\newcommand{\TCHOICEset}{\ensuremath{\cla{T}}}
+\newcommand{\MODELset}{\ensuremath{\cla{M}}}
+\newcommand{\EVENTSset}{\ensuremath{\cla{E}}}
+\newcommand{\CONSISTset}{\ensuremath{\cla{W}}}
+%
+%   often used functions
+%
+%   error (loss)
+\newcommand{\err}[1]{\ensuremath{\mathrm{err}\at{#1}}}
+%
+%   probability 
+\newcommand{\prfunc}{\ensuremath{\mathrm{P}}}       
+%   P(X = x)
+\newcommand{\pr}[1]{\ensuremath{\prfunc\at{#1}}}    
+%   P_X(x)
+\newcommand{\prd}[1]{\ensuremath{\prfunc_{#1}}}     
+\newcommand{\prT}{\prd{\TCHOICEset}}
+\newcommand{\prM}{\prd{\MODELset}}
+\newcommand{\prE}{\prd{\EVENTSset}}
+\newcommand{\prC}{\prd{\cla{C}}}
+%
+%   local notation
+%
+ %   m(x)
+\newcommand{\pw}[1]{\ensuremath{\mu\at{#1}}}           
+%   m_T     total choices 
+\newcommand{\pwT}{\ensuremath{\mu_{\TCHOICEset}}}   
+%   m_T(x)
+\newcommand{\pwt}[1]{\ensuremath{\pwT\at{#1}}}     
+%   m_M     stable models  
+\newcommand{\pwM}{\ensuremath{\mu_{\MODELset}}}   
+%   m_M(x)
+\newcommand{\pwm}[1]{\ensuremath{\pwM\at{#1}}}     
+%   m_C     eq. classes 
+\newcommand{\pwC}{\ensuremath{\mu_{\textrm{\cla{C}}}}}   
+%   m_C(x)
+\newcommand{\pwc}[1]{\ensuremath{\pwC\at{#1}}}     
+%   m_E     events 
+\newcommand{\pwE}{\ensuremath{\mu_{\EVENTSset}}}   
+%   m_E(x)
+\newcommand{\pwe}[1]{\ensuremath{\pwE\at{#1}}}     
+%
+%
+%
+\newcommand{\stablecore}[1]{\ensuremath{\left\llbracket #1 \right\rrbracket}}
+\newcommand{\inconsistent}{\bot}
+\newcommand{\given}{\ensuremath{~\middle|~}}
+\newcommand{\consequenceclass}{\ensuremath{\Lambda}}
+\newcommand{\indepclass}{\ensuremath{\Diamond}}
+\newcommand{\probfact}[2]{\ensuremath{#1:#2}}
+\newcommand{\probrule}[3]{\probfact{#1}{#2} \leftarrow #3}
+\newcommand{\class}[1]{\ensuremath{[{#1}]_{\sim}}}
+\newcommand{\tcgen}[1]{\MODELset\at{#1}}
+\newcommand{\condsymb}[2]{\ensuremath{p_{#1|#2}}}
+\newcommand{\lpmln}{\texttt{LP\textsuperscript{MLN}}}
+\newcommand{\emptyevent}{\ensuremath{\lambda}}
+\newcommand{\powerset}[1]{\ensuremath{\mathbb{P}\at{#1}}}
+%
+%   Acronyms
+%
+\acrodef{BK}[BK]{background knowledge}
+\acrodef{ASP}[ASP]{Answer Set Program}
+\acrodef{NP}[NP]{normal program}
+\acrodef{LP}[LP]{Logic Program}
+\acrodef{PCR}[PCR]{program with choice rules}
+\acrodef{DS}[DS]{distribution semantics}
+\acrodef{PF}[PF]{probabilistic fact}
+\acrodef{TC}[TC]{total choice}
+\acrodef{SM}[SM]{stable model}
+\acrodef{SC}[SC]{stable core}
+\acrodef{KL}[KL]{Kullback-Leibler}
+\acrodef{SBF}[SBF]{Simple But Fruitful}
+\acrodef{RSL}[RSL]{Random Set of Literals}
+\acrodef{RCE}[RCE]{Random Consistent Event}
+\acrodef{SASP}[SASP]{Stochastic Answer Set Program}
+%
+%   Reviewing
+%
+\newcommand{\LOOK}{\ensuremath{\blacksquare}}
+\newcommand{\delete}[1]{\sout{#1}}
+\newcommand{\replace}[2]{\delete{#1}{#2}}
+%\newcommand{\franc}[1]{{\color{green!30!black}#1}}
+\newcommand{\bruno}{\color{red!60!black}}
+%\newcommand{\spa}[1]{{\color{brown!80!black}{#1}}}
+\newcommand{\dietmar}[1]{{\color{brown!40!black}#1}}
+
+% -- side notes --
+
+\newcommand{\selfnote}[1]{\todo[backgroundcolor=green!20]{{\footnotesize #1}}}
+\newcommand{\spa}[1]{{\todo[size=footnotesize,color=teal!20]{\textbf{SPA:} #1}}}
+\newcommand{\dsnote}[1]{{\todo[size=footnotesize,color=teal!20]{\textbf{DS:} #1}}}
+\newcommand{\franc}[1]{{\todo[size=footnotesize,color=green!30]{\textbf{FC:} #1}}}
+\newcommand{\bdnote}[1]{{\todo[size=footnotesize,color=red!60]{\textbf{BD:} #1}}}

@@ -1,0 +1,34 @@
+{
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [
+        "autoepistemic",
+        "circunspection",
+        "clingo",
+        "findreplace",
+        "fixpoint",
+        "ignorestatus",
+        "issubset",
+        "issubsmodel",
+        "issupersmodel",
+        "mktemp",
+        "nonmonotonic",
+        "outf",
+        "println",
+        "readchomp",
+        "SASP",
+        "smodel",
+        "smodels",
+        "struct",
+        "testset",
+        "typeof"
+    ],
+    "ignoreWords": [],
+    "import": [],
+    "enabled": true,
+    "enableFiletypes": [
+        "latex"
+    ]
+}
