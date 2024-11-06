@@ -1,4 +1,3 @@
-
 \usepackage{multirow}
 
 % LNAI stuff
@@ -23,6 +22,7 @@
 
 \usepackage{tikz}
 \tikzset{
+    boxed/.style={draw, rectangle, rounded corners=4pt, fill=gray!10,inner sep=1em, anchor=center},
     event/.style={},
     smodel/.style={fill=gray!25},
     tchoice/.style={draw, circle},
@@ -70,6 +70,8 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
   \itemsep 0pt plus 1pt
   \parskip 0pt plus 1pt}
 
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
 \newcommand{\eat}[1]{}
 \newcommand{\at}[1]{\ensuremath{\!\del{#1}}}        %   argument
 %
@@ -84,7 +86,8 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 %
 \newcommand{\conj}{\ensuremath{\wedge}} \newcommand{\disj}{\ensuremath{\vee}}
 \newcommand{\clause}{\ensuremath{\leftarrow}}
-\newcommand{\naf}{\ensuremath{\sim\!}}
+\DeclareMathOperator{\naf}{\sim\!}
+% \newcommand{\naf}{\ensuremath{\sim\!\!}}
 \newcommand{\co}[1]{\ensuremath{\overline{#1}}}     %   complement
 \renewcommand{\complement}{\ensuremath{\mathcal{C}}}     %   complement
 %
@@ -157,9 +160,9 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 %   Acronyms
 %
 \acrodef{BK}[BK]{background knowledge}
-\acrodef{ASP}[ASP]{Answer Set Program}
+\acrodef{ASP}[ASP]{answer set program}
 \acrodef{NP}[NP]{normal program}
-\acrodef{LP}[LP]{Logic Program}
+\acrodef{LP}[LP]{logic program}
 \acrodef{PCR}[PCR]{program with choice rules}
 \acrodef{DS}[DS]{distribution semantics}
 \acrodef{PF}[PF]{probabilistic fact}
@@ -167,16 +170,24 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \acrodef{SM}[SM]{stable model}
 \acrodef{SC}[SC]{stable core}
 \acrodef{KL}[KL]{Kullback-Leibler}
-\acrodef{SBF}[SBF]{Simple But Fruitful}
-\acrodef{RSL}[RSL]{Random Set of Literals}
-\acrodef{RCE}[RCE]{Random Consistent Event}
-\acrodef{SASP}[SASP]{Stochastic Answer Set Program}
+\acrodef{SBF}[SBF]{simple but fruitful}
+\acrodef{RSL}[RSL]{random set of literals}
+\acrodef{RCE}[RCE]{random consistent event}
+\acrodef{SASP}[SASP]{stochastic answer set program}
+\acrodef{WASP}[WASP]{weighted answer set program}
+\acrodef{HMM}[HMM]{hidden Markov model}
+%
+%   Common objects
+%
+\newcommand{\sbf}{\ensuremath{\mathrm{sbf}}}
 %
 %   Reviewing
 %
+\newcounter{revcounter}
 \newcommand{\LOOK}{\ensuremath{\blacksquare}}
 \newcommand{\delete}[1]{\sout{#1}}
-\newcommand{\replace}[2]{\delete{#1}{#2}}
+\newcommand{\sidenote}[1]{\stepcounter{revcounter}{\color{red!50!black}\(\vert^{\arabic{revcounter}}\)}\marginpar{{\color{red!50!black}\(^{\arabic{revcounter}}\vert\)}\footnotesize #1}}
+\newcommand{\replace}[2]{\delete{#1}\sidenote{#2}}
 %\newcommand{\franc}[1]{{\color{green!30!black}#1}}
 \newcommand{\bruno}{\color{red!60!black}}
 %\newcommand{\spa}[1]{{\color{brown!80!black}{#1}}}
