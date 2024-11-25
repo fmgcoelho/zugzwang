@@ -1,3 +1,14 @@
+# A Logical Framework for Propagation in Stable Models
+
+- language for "events"  - _modal_ logic &rarr; assigned to bruno
+- axioms for "**stable** models" &rarr; assigned to franc
+- axioms for "class" $\{\!\!\{e\}\!\!\}$.
+- Relation to a "weight" $\omega(e)$.
+- A "distance" $d(a,b)$
+- An inner product $a|b$
+
+## More
+
 For each $e\in E$, define $\{\{e\}\} \subseteq M$ such that:
 
 1. $\forall s \in M, s \in \{\{s\}\}$.
@@ -15,3 +26,13 @@ For each $e\in E$, define $\{\{e\}\} \subseteq M$ such that:
     and then consider two cases:
     - If $\{\{e\}\}'$ has more than one element, $\{\{e\}\} = \emptyset$, or not.
 6. Is there any relation with the Hamming distance and code correction?
+7. What about a "projection" like _e.g._
+   $$ <e_1, e_2> = \frac{\left| e_1 \right|}{\left| e_1 \cup e_2\right|}$$ 
+   and, instead of using classes, we define
+      $$\omega(e) = \sum_{s\in M}<e, s> \omega(s)$$
+8. Or inner product.
+
+## Stable models axioms
+
+1. If $a$, $b$ are SM, then neither $a \subset b$ nor $b \subset a$.
+2. If $a$ is a SM then $a$ is "consistent".

@@ -46,7 +46,7 @@
 \usepackage[euler-digits,euler-hat-accent]{eulervm}
 \usepackage[nice]{nicefrac}
 \usepackage{stmaryrd}
-\usepackage{acronym}
+\usepackage[smaller]{acronym}
 \usepackage{multicol}
 \usepackage{multirow}
 \usepackage{cleveref}
@@ -94,15 +94,20 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 %   often used sets
 %
 \newcommand{\ATOMSset}{\ensuremath{\cla{A}}}
+\newcommand{\Rset}{\ensuremath{\mathbb{R}}}
 \newcommand{\LITERALSset}{\ensuremath{\cla{L}}}
 \newcommand{\PATOMset}{\ensuremath{\ATOMSset_{\cla{P}}}}
+\newcommand{\WATOMset}{\ensuremath{\ATOMSset_{\cla{W}}}}
 \newcommand{\FACTSset}{\ensuremath{\cla{F}}}
 \newcommand{\PROBFset}{\ensuremath{\cla{P}}}
+\newcommand{\WEIGHTFset}{\ensuremath{\cla{W}}}
 \newcommand{\RULESset}{\ensuremath{\cla{R}}}
 \newcommand{\TCHOICEset}{\ensuremath{\cla{T}}}
 \newcommand{\MODELset}{\ensuremath{\cla{M}}}
 \newcommand{\EVENTSset}{\ensuremath{\cla{E}}}
-\newcommand{\CONSISTset}{\ensuremath{\cla{W}}}
+\newcommand{\CONSISTset}{\ensuremath{\cla{C}}}
+% \newcommand{\FRUITFUL}{\ensuremath{P_{\mathrm{fuitful}}}}
+\newcommand{\FRUITFUL}{\ensuremath{P_{\mathrm{fr}}}}
 %
 %   often used functions
 %
@@ -119,6 +124,17 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\prM}{\prd{\MODELset}}
 \newcommand{\prE}{\prd{\EVENTSset}}
 \newcommand{\prC}{\prd{\cla{C}}}
+%
+%   weights 
+\newcommand{\wgtfunc}{\ensuremath{\omega}}       
+%   P(X = x)
+\newcommand{\wgt}[1]{\ensuremath{\wgtfunc\at{#1}}}    
+%   P_X(x)
+\newcommand{\wgtd}[1]{\ensuremath{\wgtfunc_{#1}}}     
+\newcommand{\wgtT}{\wgtd{\TCHOICEset}}
+\newcommand{\wgtM}{\wgtd{\MODELset}}
+\newcommand{\wgtE}{\wgtd{\EVENTSset}}
+\newcommand{\wgtC}{\wgtd{\cla{C}}}
 %
 %   local notation
 %
@@ -150,6 +166,8 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\indepclass}{\ensuremath{\Diamond}}
 \newcommand{\probfact}[2]{\ensuremath{#1:#2}}
 \newcommand{\probrule}[3]{\probfact{#1}{#2} \leftarrow #3}
+\newcommand{\weightfact}[2]{\ensuremath{#1\!:\!#2}}
+\newcommand{\weightrule}[3]{\weightfact{#1}{#2} \leftarrow #3}
 \newcommand{\class}[1]{\ensuremath{[{#1}]_{\sim}}}
 \newcommand{\tcgen}[1]{\MODELset\at{#1}}
 \newcommand{\condsymb}[2]{\ensuremath{p_{#1|#2}}}
@@ -161,11 +179,14 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 %
 \acrodef{BK}[BK]{background knowledge}
 \acrodef{ASP}[ASP]{answer set program}
+% \acrodef{ASP}[ASP]{answer set prolog}
 \acrodef{NP}[NP]{normal program}
+\acrodef{DP}[DP]{disjunctive program}
 \acrodef{LP}[LP]{logic program}
 \acrodef{PCR}[PCR]{program with choice rules}
 \acrodef{DS}[DS]{distribution semantics}
 \acrodef{PF}[PF]{probabilistic fact}
+\acrodef{WF}[WF]{weighted fact}
 \acrodef{TC}[TC]{total choice}
 \acrodef{SM}[SM]{stable model}
 \acrodef{SC}[SC]{stable core}
@@ -176,6 +197,7 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \acrodef{SASP}[SASP]{stochastic answer set program}
 \acrodef{WASP}[WASP]{weighted answer set program}
 \acrodef{HMM}[HMM]{hidden Markov model}
+\acrodef{MAP}[MAP]{Maximum A Posteriori}
 %
 %   Common objects
 %
@@ -186,9 +208,9 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcounter{revcounter}
 \newcommand{\LOOK}{\ensuremath{\blacksquare}}
 \newcommand{\delete}[1]{\sout{#1}}
-\newcommand{\sidenote}[1]{\stepcounter{revcounter}{\color{red!50!black}\(\vert^{\arabic{revcounter}}\)}\marginpar{{\color{red!50!black}\(^{\arabic{revcounter}}\vert\)}\footnotesize #1}}
+\newcommand{\sidenote}[1]{\stepcounter{revcounter}{\color{red!50!black}\(\vert^{\arabic{revcounter}}\)}\marginpar{{\color{red!50!black}\(^{\arabic{revcounter}}\vert\)}\scriptsize #1}}
 \newcommand{\replace}[2]{\delete{#1}\sidenote{#2}}
-%\newcommand{\franc}[1]{{\color{green!30!black}#1}}
+\newcommand{\franc}[1]{{\color{green!30!black}#1}}
 \newcommand{\bruno}{\color{red!60!black}}
 %\newcommand{\spa}[1]{{\color{brown!80!black}{#1}}}
 \newcommand{\dietmar}[1]{{\color{brown!40!black}#1}}
@@ -196,7 +218,7 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 % -- side notes --
 
 \newcommand{\selfnote}[1]{\todo[backgroundcolor=green!20]{{\footnotesize #1}}}
-\newcommand{\spa}[1]{{\todo[size=footnotesize,color=teal!20]{\textbf{SPA:} #1}}}
+\newcommand{\spanote}[1]{{\todo[size=footnotesize,color=teal!20]{\textbf{SPA:} #1}}}
 \newcommand{\dsnote}[1]{{\todo[size=footnotesize,color=teal!20]{\textbf{DS:} #1}}}
-\newcommand{\franc}[1]{{\todo[size=footnotesize,color=green!30]{\textbf{FC:} #1}}}
+\newcommand{\francnote}[1]{{\todo[size=footnotesize,color=green!30]{\textbf{FC:} #1}}}
 \newcommand{\bdnote}[1]{{\todo[size=footnotesize,color=red!60]{\textbf{BD:} #1}}}

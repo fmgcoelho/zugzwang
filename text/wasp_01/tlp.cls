@@ -44,8 +44,9 @@
 \DeclareOption{printer}{\setlength\overfullrule{0pt}\trimrule0pt\printertrue}
 \DeclareOption{OA}{\global\OAtrue}
 
-
-\ExecuteOptions{twoside,final,onecolumn}
+% By FC
+%\ExecuteOptions{twoside,final,onecolumn}
+\ExecuteOptions{oneside,draft,onecolumn}
 \ProcessOptions\relax
 
 \setlength\lineskip{1\p@}

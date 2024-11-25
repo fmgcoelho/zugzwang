@@ -26,73 +26,59 @@
     Drawing inspiration from HMMs; State of the art of PLP and Probabilistic ASP; Leveraging current Prob ASP systems; 
 \end{abstract}
 
-Using a \acl{LP} to model and reason over a real world situation is often complicated because of uncertainty underlying the problem being worked on.
-Classic \aclp{LP} represent knowledge in precise terms, which turn out to be problematic when the application data is affected by stochastic factors, which is frequently the case.
 
-\section{Uncertainty and ASPs}
+\noindent Using a \acl{LP} to model and reason over a real world scenario is often hard because of uncertainty underlying the problem being worked on.
+Classic \aclp{LP} represent knowledge in precise and complete terms, which turns out to be problematic when the scenario is characterized by stochastic or observability factors. For example, medical exams illustrate both problems: a system with unreachable parts \eg\ some parts of a living organism can't be directly observed; a sensor that adds noise to real values \eg\ limits and imperfections of instrumentation.
 
+In this work we aim to explore how \aclp{ASP} plus weight augmented facts can lead to useful characterizations for this class of problems; We assume that knowledge about a \emph{system} includes both a theoretical \emph{model}\sidenote{Use `answer set' instead of `stable model'?} and empirical \emph{data} such that:
+\begin{itemize}\tight
+    \item The model is an \acl{ASP} whose \aclp{SM} are the the system states.
+    \item The data is a set of observations and each observation is a set of literals from the model.
+    \item The weights in the augmented facts are propagated to the \aclp{SM} and, in general, to observations such as above.
+\end{itemize} 
 
-\begin{figure}[t]
-	\begin{center}
-		\begin{tikzpicture}[node distance=4em]
-            \node[boxed, fill=cyan!5] (A) {system};
-			\node[boxed, right = of A, fill=cyan!5] (S) {state};
-			\node[boxed, right = of S, fill=cyan!5] (z) {observation};
-			\node[boxed, below = of A, fill=yellow!5] (P) {program};
-			\node[boxed, right = of P, fill=yellow!5] (m) {stable model};
-			\node[boxed, right = of m] (L) {literals};
-			% ----
-            \path[-latex] 
-                (A) edge node[above] {\emph{is in a\ldots}} (S)
-                (P) edge node[left] {\emph{models}} (A)
-                (S) edge node[above] {\emph{reveals}} (z)
-                (S) edge[dotted,-] node[right] {\emph{coincide}} (m)
-                (L) edge[bend right, dashed] node[right] {\emph{describe}} (z)
-                (L) edge[dashed] node[above]{\emph{describe}} (m)
-                (P) edge node[below] {\emph{entails}} (m);
-		\end{tikzpicture}
-	\end{center}
+In this setting the empirical distribution from the data can be used in two different tasks:
+\begin{enumerate}\tight
+    \item Estimate parameteres required in the propagation process above.
+    \item Evaluate the model \emph{wrt.}\ the observations.
+\end{enumerate}
 
-	\caption{%
-		}
-\end{figure}
+To frame this setting  we assume that the atoms in the model are associated to sensors of the system's states. 
+More specifically, if $a$ an atom, a state can activate the sensor $a$ or $\neg a$ (strong negation) whereas no activation is represented by $\naf a$ and $\naf \neg a$ (default negation).
+This redundancy is required to model hidden parts of a system as well as faulty sensors.
+\sidenote{Look carefully to the relation between missing values in observations and default negation.}
+For example, in
+$$\left\{ a, \neg a, \naf b, \naf \neg b, \naf c, \neg c \right\}$$
+both $a$ and $\neg a$ are activated (suggesting a fault in the relevant sensors), $b$ is not observed (hidden?), and $\naf c, \neg c$ reports the (consistent) activation of $\neg c$ and no activation of $c$.
+If we omit the default negations and use $\co{x}$ to denote $\neg x$ this observation can be shortened to the equivalent form $a\co{a}\co{c}$. 
 
-\Acp{HMM} setup a well known, widely used, framework to describe and study partially observable stochastic processes\sidenote{HMMs stress the \textbf{process} and we are not looking into that.}. Briefly, a \ac{HMM} process is described by a sequence of states, each defined as a set of random variables that are partially observed. This means that (1) observation of states include only a fixed subset of those variables, and also that (2) the observed values are subject to random perturbations.
-
-We try to capture both the partial observability and the stochastic nature of a system in a logic setting. To this end we think of a system, $S$, as a formal model, $P$, together with a set of observations, $D$:
-
-\begin{equation}\label{eq:def.system}
-    S = \left( P, D \right)
-\end{equation}
-
-The formal model is an \acl{ASP} extended with \emph{weights}, that we describe later in this paper, and such that the \aclp{SM} of the program are the system states. On the other hand, any given system state can be (or has been) observed. The outcome of each single observation is a set of literals of that program.
-
-\begin{example}[Coins, Dices, and Cards]
-    Consider a scenario where a coin is tossed and, if the result is \emph{heads}, \(a\), then a dice is thrown, \(b\), or a card is drawn, \(c\). If the coin lands in \emph{tails}, \(\neg a\), no information is given. A formal model of this system is the program  
+\begin{example}[Coins, Cards, and Dices]
+    Consider a scenario where a coin is tossed and, if it lands in \emph{heads}, $a$, then a dice is thrown, $b$, or a card is drawn, $c$. If the coin lands in \emph{tails}, $\neg a$, no more action is performed. A model of this is, for example, the program  
     \begin{equation}\label{eq:derived.fruitful}
-        P_{\sbf} = \left\lbrace\begin{aligned}
+        P_{\mathrm{ccd}} = \left\lbrace\begin{aligned}
             a \vee \neg{a}  & ,          %
             \\
             b \vee c        & \clause a
         \end{aligned}
         \right.
     \end{equation}
-    that has atoms \(\set{a, b, c}\), literals \(\set{a, \neg a, b, \neg b, c, \neg c}\) and \aclp{SM}
+    that has atoms $\set{a, b, c}$, literals $\set{a, \neg a, b, \neg b, c, \neg c}$ and, using the shortned form, \aclp{SM}
     \begin{equation}
-        \set{a, b}, \set{a, c}, \set{\neg a}.
+        ab, ac, \co{a}.
     \end{equation}
     
+    
     Possible observations include:
-    \begin{itemize}
-        \item \(\set{a,c}\): a \ac{SM}, therefore a system state, observed \emph{heads} and \emph{card}.
-        \item \(\set{a}\): not a \ac{SM} but contained in the two \acp{SM} $\set{a, b}$ and $\set{a, c}$, observed \emph{heads} but we have no information about the \emph{cards} or the \emph{dice}.
-        \item \(\set{\neg a, \neg b}\): not a \ac{SM} but contains the \ac{SM} $\set{\neg a}$, the coin was observed as \emph{not heads} (\emph{tails}?); also we are certain that no card was drawn but have no information about the dice.
-        \item \(\set{b,c}\): not related with any \ac{SM}.
-        \item \(\set{a,\neg a}\): an inconsistent observation.
+    \begin{itemize}\tight
+        \item $ac$, short of $\{a,\naf\neg a,\naf b, \naf \neg b, c, \naf \neg c\}$: a \acl{SM}, therefore a system state, observed \emph{heads} and \emph{card}.
+        \item $a$: not a \acs{SM} but contained in the two \acsp{SM} $ab$ and $ac$; observed \emph{heads} but we have no information about the \emph{cards} or the \emph{dice}.
+        \item $\co{a}\co{b}$: not a \acs{SM} but contains the \acs{SM} $\co{a}$; coin observed as \emph{not heads} (\emph{tails}?); also we recorded no card drawn but have no information about the dice.
+        \item $b,c$: not related with any \acs{SM}.
+        \item $a\co{a}$: an inconsistent observation.
     \end{itemize}    
 \end{example}
 
-We use sets of literals, instead of atoms, to represent observations because they make possible the distintion between a \emph{explicit negative observation} \(\neg\alpha\) (\eg ``I see tails.'') and \emph{not observed} \(\naf \alpha\) (\eg ``The coin in hidden.''). This corresponds to assuming a ``boolean sensor'' for each $\alpha$ and $\neg \alpha$.
+We use sets of literals, instead of atoms, to represent observations because they make possible the distintion between a \emph{explicit negative observation} $\neg\alpha$ (\eg ``I see tails.'') and \emph{not observed} $\naf \alpha$ (\eg ``The coin in hidden.''). This corresponds to assuming a ``boolean sensor'' for each $\alpha$ and $\neg \alpha$.
 
 So, the program \ref{eq:derived.fruitful} defines the ``sensors''
 \begin{equation*}

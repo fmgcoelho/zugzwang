@@ -9,6 +9,7 @@
         "clingo",
         "findreplace",
         "fixpoint",
+        "functors",
         "ignorestatus",
         "issubset",
         "issubsmodel",

@@ -1,5 +1,5 @@
-{ a ; b }.
-
+{ a ; b ; c }.
+:- 2 {a ; b ; c} 2.
 % Answer: 1
 %
 % Answer: 2

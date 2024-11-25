@@ -1,7 +1,8 @@
 \newif\ifTLP     \TLPtrue
 \newif\ifTLPBIB  %\BIBTLPtrue
-\newif\ifLNCS    %\LNCStrue
+\newif\ifLNCS	%\LNCStrue
 \newif\ifExamples%\EXAMPLEStrue
+\newif\ifREVEDIT\REVEDITtrue
 
 
 % TPLP/LNCS stuff
@@ -18,6 +19,17 @@
 \fi
 
 \input{macros}
+
+\ifREVEDIT
+	\usepackage{geometry}
+	\geometry{
+		paper=a4paper,
+		left=1cm,
+		right=5cm,
+		top=1cm,
+		bottom=2cm
+	}
+\fi
 
 \begin{document}
 
@@ -70,383 +82,270 @@
 
 \begin{abstract}
 	% \spa{needs work} %
-	\Aclp{LP}, more specifically, \Aclp{ASP}, can be annotated with
-	probabilities on facts to express uncertainty.  We address the
-	problem of propagating the probabilities from the annotated facts of
-	an \acl{ASP} to its \aclp{SM}, and from there to events (sets of literals) in a dataset over the program's
-	domain. %
+	\Aclp{LP}, more specifically, \aclp*{ASP}, can be annotated with probabilities on facts to express uncertainty.
+	We address the 	problem of propagating the probabilities from the annotated facts of an \acl*{ASP} to its \aclp*{SM}, and from there to events (sets of literals) in a dataset over the program's domain. %
 
-	We propose a novel approach which is algebraic in the sense that it relies on
-	an equivalence relation over the set of events. Uncertainty is then described
-	as polynomial expressions over variables. We propagate the probability
-	function in the space of models and events, rather than doing so within the
-	syntax of the program.
+	We propose a novel approach which is algebraic in the sense that it relies on an equivalence relation over the set of events.
+	Uncertainty is then described as polynomial expressions over variables.
+	We propagate the weight function in the space of models and events, rather than doing so within the syntax of the program.
 	%
-	Our approach allows us to investigate probabilistic annotated programs and to
-	determine how suitable a given one is for modeling a given dataset containing
-	observations.
+	Our approach allows us to investigate weight annotated programs and to determine how suitable a given one is for modeling a given dataset containing events.
 \end{abstract}
 
 \begin{keywords}
-	Answer-Set Programming, Stable Models,
-	Probabilistic Logic Programming
+	Answer-Set Programming, Stable Models, Probabilistic Logic Programming
 \end{keywords}
 
 \section{Introduction}
 \label{sec:introduction}
 
-Using a \acl{LP} to model and reason over a real world situation is often
-complicated because of uncertainty underlying the problem being worked on.
-Classic \aclp{LP} represent knowledge in precise terms, which turn out to be
-problematic when the application data is affected by stochastic factors,
-which is frequently the case.
-% A limitation of logical representations in real world applications is
-% the implicit assumption that the \acl{BK} is perfect.  This assumption
-% becomes problematic when data is affected by stochastic factors, which
-% is often the case.
-In this work, we aim to explore how \aclp{ASP} augmented with probabilistic
-facts can lead to useful characterizations of probability distributions
-applicable to the program's domain.
+\noindent Using \iac{LP} to model and reason over a real world scenario is often hard because of uncertainty underlying the problem being worked on.
+Classic \acp{LP} represent knowledge in precise and complete terms, which turns out to be problematic when the scenario is characterized by stochastic or observability factors.
+%
+Medical exams illustrate both problems: some parts of a living organism can't be directly observed \ie\ a system with unreachable parts; instrumentation has limits and imperfections \ie\ sensors that add noise to the real values.
 
-Systems such as \texttt{Problog}~\cite{de2007problog},
-\texttt{P-log}~\cite{baral2009probabilistic} or
-\lpmln~\cite{lee2016weighted}, in line with~\cite{kifer1992theory}, derive a
-probability distribution from the \textit{syntax} of an annotated logic
-program. Instead, we propose a method where such distributions result from
-the program's \textit{\acp{SM}} and probability-annotated facts. We use the
-latter to define a function on the \acp{SM} which we then utilize to derive a
-probability distribution for the events in the program domain.
+We aim to explore how \acp{ASP} plus weight annotated facts can lead to useful characterizations for this class of problems; We assume that knowledge about a \emph{system} includes a formal \emph{representation}\footnote{We use `representation' instead of `model' to avoid confusion with the \emph{stable models} of \aclp{ASP}.}
+and empirical \emph{data} such that (i) the \emph{representation} is a \acl{LP} whose \acp{SM} are the system states; (ii) \emph{data} is a set of events; an \emph{event} is a set of literals; (iii) the \emph{weights} in the \emph{annotated facts} are propagated to the \aclp{SM} and, in general, to events.
 
-The step from facts to \aclp{SM} is non-deterministic in the sense that a
-given set of facts may entail zero, one or more \acp{SM}. As explained below,
-and also in
-\cite{verreet2022inference,pajunen2021solution,cozman2020joy,baral2009probabilistic},
-this constitutes a problem when propagating probabilities from annotated
-facts to \aclp{SM}. We represent non-unique choices by a parameter that can
-be later estimated from further information, \emph{e.g.}\ observations. This
-approach enables later refinement and scoring of a partial program of a model
-from additional evidence.
+In this setting, data can be used to estimate some parameteres used in the propagation process and, more importantly, to address the question of `\emph{How accurate is the representation of the system?}'.
 
-\Acp{ASP} \cite{lifschitz2002answer,lifschitz2008twelve} are logic
-programs based on the \acl{SM} semantics of \acp{NP}.  \Acp{ASP}
-represent a problem and the resulting models (\emph{answer sets}) can
-be found using different approaches, including SAT solving technology
-\cite{gebser2011potassco,adrian2018asp,niemela1997smodels} or through
-top-down searching
-\cite{alberti2017cplint,arias2020justifications,marple2017computing}.
+%
+Systems such as \texttt{Problog}~\cite{de2007problog}, \texttt{P-log}~\cite{baral2009probabilistic} or \lpmln~\cite{lee2016weighted}, in line with~\cite{kifer1992theory}, derive a probability distribution of the \aclp{SM} from the \textit{syntax} of an annotated logic program.  The more expressive of these systems, according to \cite{lee2017lpmln}, is \lpmln, that can embed the\ac{MAP} estimation of the other systems.
+
+\sidenote{\franc{addressing} It is not made sufficiently clear why we need another probabilistic formalism based on answer set programming, or why this particular formalisms should fill that niche.}
+Since the probability distribution results from the program's syntax, these systems are limited to handle \emph{a priori} information and are unable to support \emph{posterior} data. Furthermore, these distributions are limited to the \acp{SM}, while we extend their domain to any event. However, the key feature that we aim to address is concerned with the inherent uncertainty of the \acp{SM} in \aclp{LP} such as $\weightfact{a}{0.3}, b \vee c \clause a$. Intuitively, this program entails three \acp{SM}: $ac$, $ab$ and $\neg a$. We can assign the probability of $\neg a$ as $0.7$ but what about $ab$ and $ac$? Systems like \lpmln\ assign the same probability to these \acp{SM} \cite{lee2017lpmln,cozman2020joy}.
+
+We question the underlying assumption of such assignments and propose a method where the distribution that results from the representation includes parameters (\ie\ variables in the algebraic sense: symbols for unknown quantities) that express the lack of information concerning cases as above. The values of these parameters can be estimated \emph{a posteriori}, in the presence of data.
+
+\sidenote{\franc{addressing} hidden values and default negation.}
+To frame this setting  we assume that the atoms in the representation are associated to sensors of the system's states. 
+%
+More specifically, following \cite{calimeri2020aspcore}, if $a$ is a \emph{predicate atom}, a state can activate either sensors $a$ or $\neg a$, the \emph{strong} or \emph{classical} atoms, whereas no activation is represented by the (\emph{default}, \emph{weak} or \emph{naf}) \emph{literals} $\naf a$ and $\naf \neg a$ .
+This redundancy is required to model hidden parts of a system as well as faulty sensors.
+%
+For example, in
+$$
+\left\{ a, \neg a, \naf b, \naf \neg b, \naf c, \neg c \right\}
+$$
+both $a$ and $\neg a$ are activated (suggesting \eg\ a fault in the relevant sensors), $b$ is not observed (\ie\ hidden), and $\naf c, \neg c$ reports the (consistent) activation of $\neg c$ and no activation of $c$.
+If we (i) omit the naf-literals; (ii) use $\co{x}$ to denote the classical $\neg x$; (iii) and use expressions like $ab$ to denote sets of literals such as $\set{a, b}$, then this event can be shortened to the equivalent form $a\co{a}\co{c}$.
+%
+Here we follow the convention, set in \cite{gelfond1988stable}, of denoting a model by the set of true atoms, stressing that `\emph{falsehood}' results only from the default negation \ie\ $\naf a$ (\ie\ `\texttt{not a}' in logic languages).
+More precisely, a model can contain atoms such as $a$ or $\co{b}$ but not literals $\naf a, \naf \co{b}$. 
+
+Our choice to represent sensor input using both positive and negative literals is based on the following points: 
+(i) it can be the case that there are two different sensors, $a$ for the `positive' states and $\co{a}$ for the `negative';
+(ii) rules such as $a \vee \neg a$ represent a single sensor that always yields either $a$ or $\co{a}$; also, 
+(iii) a closed-world assumption, where absence of input means classical negation, can be represented by $\co{a} \clause \naf a$. 
+
+
+%
+\sidenote{\franc{addressing} better examples that show the real usefulness of this approach \franc{maybe a toy problem with a biased coin;} \franc{Analyse the examples on the other systems and note that they are limited in form.}}
+%
+\sidenote{Normalize `fact', `atom'.}
+%
+Like in \lpmln, we annotate facts (\ie\ atoms) with weights \cite{lee2017lpmln} instead of probabilities, that result from normalization of the former.
+We then use those weights to define a function on the \aclp{SM} that is then extended to all the events in the program domain.
+The step from facts to \acp{SM} is non-deterministic in the sense that a given set of facts may entail zero, one or more \acp{SM}.
+As explained below, and also in \cite{verreet2022inference,pajunen2021solution,cozman2020joy,baral2009probabilistic}, this constitutes a problem when propagating weights to \aclp{SM}: \emph{How to distribute the weight of a fact to the entailed \acp{SM}?}
+We represent non-unique choices by a parameter that can be later estimated from further information, \ie\ data.
+This approach enables later refinement and scoring of a partial program of a representation from additional evidence.
+%
+
+\Acp{ASP} \cite{lifschitz2002answer,lifschitz2008twelve} are logic programs based on the \acl{SM} semantics of \acp{NP}. 
+\Acp{ASP} represent a problem and the resulting models (\emph{answer sets}) can be found using different approaches, including SAT solving technology \cite{gebser2011potassco,adrian2018asp,niemela1997smodels} or through top-down searching \cite{alberti2017cplint,arias2020justifications,marple2017computing}.
 % Unlike \texttt{Prolog}, \ac{ASP} is a truly declarative language that
 % supports language constructs such as disjunction in the head of a
 % rule, choice rules, and both hard and weak constraints.
 
-The \ac{DS} \cite{sato1995statistical,riguzzi2022foundations} is a key
-approach to extend logical representations with probabilistic reasoning. We
-are particularly interested in two application scenarios of such an extension
-to logic programs:
+The \ac{DS} \cite{sato1995statistical,riguzzi2022foundations} is a key approach to extend logical representations with probabilistic reasoning.
+We are particularly interested in two application scenarios of such an extension to logic programs:
 \begin{enumerate}
 
-	\item Support probabilistic reasoning tasks on the program domain,
-	      \textit{i.e.}~the set of all events, $\EVENTSset$.
+	\item Support probabilistic reasoning tasks on the program domain,  \ie\ the set of all events, $\EVENTSset$.
 
-	\item Given a dataset and a divergence measure, a program can be scored
-	      (\textit{e.g.}~by the divergence w.r.t.~the empiric distribution of the
-	      dataset), and weighted or sorted amongst other programs. These are key
-	      ingredients to construct an algorithm to determine, for example, optimal
-	      models for a dataset.
+	\item Given a dataset and a divergence measure, a program can be scored (\eg\ by the divergence w.r.t.~the empiric distribution of the dataset), and sorted amongst other programs.
+	These are key ingredients to construct an algorithm to determine, for example, optimal representations for a dataset.
 
 \end{enumerate}
 
-\noindent The remainder of this article is structured as follows: the
-next section provides necessary context.  In
-section~\ref{sec:syntax.and.semantics} we discuss the syntax and
-semantics of our proposed language for \Acfp{SASP}.  We also define a
-probability distribution over total choices and address the issue of
-how to propagate these probabilities from literals to events, which is
-done in Section \ref{sec:propagating.probalilities}.  This method
-relies on an equivalence relation on the set of events.  Also, we
-express uncertainty by polynomial expressions over variables that add
-up to $1$ and depend on the total choices and on the stable models.
-Some final remarks and ideas for future developments are presented in
-Section~\ref{sec:discussion}.
+\noindent The remainder of this article is structured as follows: the next section provides necessary context.
+In section~\ref{sec:syntax.and.semantics} we discuss the syntax and semantics of our proposed language for \acfp{WASP}.
+We also define a weight distribution over total choices and address the issue of how to propagate these probabilities from facts to events, which is done in Section \ref{sec:propagating.weights}.
+This method relies on an equivalence relation on the set of events.
+Also, we express uncertainty by polynomial expressions over variables that add up to $1$ and depend on the total choices and on the stable models.
+Some final remarks and ideas for future developments are presented in Section~\ref{sec:discussion}.
 
 \section{Framework}
 \label{sec:framework}
 
-Selecting truth values for the literals annotated with probabilities will
-lead a \acf{TC}. To propagate probabilities from \aclp{TC} to events we take
-the following stance: %% \spa{check}
-\begin{itemize}
-	\item A program describes an observable system.
-	\item The program's \aclp{SM} are the possible states of that system.
-	\item Observations are stochastic and detected in the form of events.
-\end{itemize}
+Selecting truth values for the annotated facts will lead a \acf{TC}.
+To propagate probabilities from \aclp{TC} to events we take the following stance: %% \spa{check}
 
-In particular, one observation may coincide with a \acl{SM} but can also be
-sub-complete (i.e.~a proper subset of a \ac{SM}) or super-complete (a proper
-super-set of a \ac{SM}), and might not uniquely determine the actual state of
-the system.
+\begin{enumerate}\tight
+    \item The \emph{representation} is an \acl{ASP} whose \aclp{SM} are the possible system states.\label{assumption:smodels.equal.systemstates}
+    \item The \emph{data} is a set of events; an \emph{event} is a subset of the atoms of the representation.\label{assumption:data.literals}
+    %\item The representation and the data can be available at different moments.\label{assumption:data.availability}
+    \item The \emph{weights} in the \emph{annotated facts} are propagated to the \aclp{SM} and, in general, to events.\label{assumption:weights.propagation}
+\end{enumerate} 
 
-\paragraph{Propagating Probabilities.}
+% \begin{itemize}
+% 	\item A program describes an observable system.
+% 	\item The program's \aclp{SM} are the possible states of that system.
+% 	\item Events are stochastic and detected in the form of events.
+% \end{itemize}kf
 
-Our goal is to propagate probabilities from \acp{TC} to \acp{SM} and from
-there to any event. This propagation process soon faces a non-deterministic
-problem, illustrated by \cref{ex:fruitful} in
-\cref{ssec:propagating.probabilities}, where multiple \acp{SM}, $ab$ and
-$ac$, result from a single \ac{TC}, $a$, but there is not enough explicit
-information in the program to assign a single probability to each \ac{SM}.
+In particular, some events may coincide with a \acl{SM} but others can be contained in, or contain, some \acp{SM} or neither case (but never both) and, thus, not uniquely determine the state of the system.
 
-\emph{ We propose to use algebraic variables to describe that lack of
-	information and then estimate the value of those variables from
-	empirical data. }
+\paragraph{Propagating Weights.}
 
-\bigskip The lack of unique \aclp{SM} is also addressed
-in~\cite{cozman2020joy} along a different approach, using credal sets.
-In another related work~\cite{verreet2022inference}, epistemic
-uncertainty (or model uncertainty) is considered as a lack of
-knowledge about the underlying model, that may be mitigated via
-further observations.  This seems to presuppose a bayesian approach to
-imperfect knowledge in the sense that having further observations
-allows one to improve or correct the model.  Indeed, that approach
-uses Beta distributions on the total choices in order to be able to
-learn a distribution on the events.  This approach seems to be
-specially fitted to being able to tell when some probability lies
-beneath some given value.  Our approach appears as similar in spirit,
-while remaining algebraic in the way that the propagation of
-probabilities is addressed.
+Our goal is to propagate weights from \acp{TC} to \acp{SM} and from there to any possible event.
+This propagation process soon faces a non-deterministic problem, illustrated by \cref{ex:fruitful} in \cref{ssec:propagating.weights}, where multiple \acp{SM}, $ab$ and $ac$, result from a single \ac{TC}, $a$, but \emph{there is not enough information in the representation to assign a single weight to each \ac{SM}}.
+\begin{quotation}\em
+	Algebraic variables\footnote{We explicitly write `algebraic variables' to avoid confusion with logic variables.} describe the lack of information in a representation in order to deterministically propagate the weight to the \aclp{SM} and events. The values of those variables is estimated from available data.
+\end{quotation}
 
-\section{Syntax and Semantics of Stochastic ASP}
+The lack of unique \acl{SM} from a \acl{TC} is also addressed in~\cite{cozman2020joy} along an approach using credal sets.
+In another related work~\cite{verreet2022inference}, epistemic uncertainty (or model uncertainty) is considered as a lack of knowledge about the underlying model, that may be mitigated via further observations.
+This seems to presuppose a bayesian approach to imperfect knowledge in the sense that having further observations allows one to improve or correct the model.
+Indeed, that approach uses Beta distributions on the total choices in order to be able to learn a distribution on the events.
+This approach seems to be specially fitted to being able to tell when some weight lies beneath some given value.
+Our approach appears as similar in spirit, while remaining algebraic in the way that the propagation of weights is addressed.
+
+\section{Syntax and Semantics of Weighted ASP}
 \label{sec:syntax.and.semantics}
 
-We start with the syntax and \ac{ASP} semantics of (propositional) \aclp{NP}
-and then proceed to the case of probabilistic annotations. We set up a
-minimal syntax, enough to illustrate our method to propagate probability from
-annotated facts to general events, without variables, functors or relation
-symbols.
+We start with the setup and discussion of a minimal syntax and semantics of propositional \ac{ASP}, without variables, functors or relation symbols, but enough to illustrate our method to propagate weights from annotated facts to events. From now on `$\neg x$' denotes classical negation and `$\naf x$' default negation.
 
 \paragraph{Syntax.}
 \label{par:syntax}
 
-Let $\ATOMSset$ be a finite set. A \textit{positive literal}, or
-\textit{atom}, is any $a \in \ATOMSset$ and a \textit{negative literal} is
-$\neg a$, also denoted $\co{a}$, for $a\in\ATOMSset$. A \textit{literal} is a
-positive or a negative literal. A \textit{fact} is a literal. For literals
-$l_1, \ldots, l_n$, a \emph{conjunction} is $ l _1 \conj \cdots \conj l_n, $
-and a \textit{disjunction} is $ l_1 \disj \cdots \disj l_n. $ A
-\textit{choice rule} is of the form $ \alpha \clause \beta, $ where $\alpha$
-is a disjunction, the \textit{head}, and $\beta$ a conjunction, the
-\textit{body}. In a \textit{normal rule} the head is a single literal. An
-\textit{\acf{ASP}} is a set of facts and (both normal and choice) rules,
-denoted, resp. $\FACTSset\at{P}$ and $\RULESset\at{P}$, or simply $\FACTSset$
-and $\RULESset$. Notice that a choice rule can be converted into a set of
-normal rules \cite{gebser2022answer}.
+We slightly adapt \cite{calimeri2020aspcore}. Let $\ATOMSset$ be a finite set of symbols, or \emph{positive atoms}. 
+For $a \in \ATOMSset$, the expressions $a$ and $\neg a$ (also denoted $\co{a}$) are \emph{(classical) atoms}; If $b$ is an atom, the expressions $l$ and $\naf l$ are \emph{(naf-)literals}.
+%
+A \textit{rule} is of the form 
+$$
+a_1 \disj \cdots \disj a_n \clause 
+	l_1 \conj \cdots \conj l_m
+$$
+where the $a_i$ are atoms and the $l_j$ are literals. The symbol `$\clause$' separates the \textit{head} from the \textit{body}. The rule is a \emph{fact} and if $n = 0$, \emph{normal} if $n = 1$, and \emph{disjunctive} if $n > 1$.
+
+An \textit{\acf{ASP}} is a set $P$ of facts and (both normal and disjunctive) rules, denoted, resp. $\FACTSset\at{P}$ and $\RULESset\at{P}$, or simply $\FACTSset$ and $\RULESset$.
+In a \textit{normal program} all the rules are normal.
+Notice that a disjunctive rule can be converted into a set of normal rules \cite{gebser2022answer}.
 
 \paragraph{Semantics.}
 
-The standard semantics of an \ac{ASP} has different, but equivalent,
-definitions \cite{lifschitz2008twelve}. A common definition is as follows
-\cite{gelfond1988stable}: let $P$ be a \acl{NP}. The Gelfond/Lifschitz
-\emph{reduct} of $P$ relative to the set $X$ of atoms results from (i)
-deleting rules that contain a literal of the form $\neg l$ in the body with
-$l \in X$ and then (ii) deleting the remaining literals of the form $\neg l'$
-from the bodies of the remaining rules. Now, $M$ is a \textit{\acf{SM}} of
-$P$ if it is the minimal model of the reduct of $P$ relative to $M$. We
-denote by $\MODELset\at{P}$, or simply $\MODELset$, the set of \aclp{SM} of
-the program~$P$.
+The standard semantics of an \ac{ASP} has a few different, but equivalent, definitions \cite{lifschitz2008twelve}.
+A common definition is as follows \cite{gelfond1988stable}: let $P$ be a \acl{NP}.
+The Gelfond/Lifschitz \emph{reduct} of $P$ relative to the set $X$ of atoms results from (i) deleting rules that contain a literal of the form $\naf p$ in the body with $p \in X$ and then (ii) deleting the remaining literals of the form $\naf q$ from the bodies of the remaining rules.
+Now, $M$ is a \textit{\acf{SM}} of $P$ if it is the minimal model of the reduct of $P$ relative to $M$.
+We denote by $\MODELset\at{P}$, or simply $\MODELset$, the set of \aclp{SM} of the program~$P$.
 
 \paragraph{Evaluation without Grounding.}
 
-A different approach in handling the generation of stable models is the one
-supported by \texttt{s(CASP)}, a system that can evaluate ASP programs with
-function symbols (functors) and constraints without grounding them either
-before or during execution, using a method similar to SLD
-resolution~\cite{marple2017computing,arias2020justifications}. This enables
-the generation of human readable explanations of the results of programs and
-addresses two major issues of grounding-based solvers, that (1) either do not
-support function symbols or, using finite domains, lead to exponential
-groundings of a program and (2) compute the complete model of the grounded
-program when, in some scenarios, it is desirable to compute only a partial
-stable model containing a query.%%
+A different approach in handling the generation of \aclp{SM} is the one supported by \texttt{s(CASP)}, a system that can evaluate ASP programs with function symbols (functors) and constraints without grounding them either before or during execution, using a method similar to SLD resolution~\cite{marple2017computing,arias2020justifications}.
+%
+\sidenote{Improve grounding and propositional cases.}
+%
+This enables the generation of human readable explanations of the results of programs and addresses two major issues of grounding-based solvers, that 
+(i) either do not support function symbols or, using finite domains, lead to exponential groundings of a program and 
+(ii) compute the complete model of the grounded program when, in some scenarios, it is desirable to compute only a partial stable model containing a query.%%
 
-\subsection*{\acsp{SASP} and their Derived Programs}
+\subsection*{\acsp{WASP} and their Derived Programs}
 
-\emph{\Acfp{SASP}} extend \acp{ASP} by adding facts with probabilistic
-annotations: A \textit{\ac{PF}} is of the form $\probfact{a}{p}$
-where $a$ is an atom and $p\in\intcc{0,1}$.  We denote the set of
-\aclp{PF} of a program by $\PROBFset$, and $\PATOMset$ the set of
-positive literals in $\PROBFset$.
+\emph{\Acfp{WASP}} extend \acp{ASP} by adding facts with weight annotations: A \emph{\ac{WF}} is of the form $\weightfact{a}{w}$ where $a$ is an atom and $w\in\intcc{0,1}$.
+%
+We denote the set of \aclp{WF} of a program by $\WEIGHTFset$, and $\WATOMset$ the set of positive atoms in $\WEIGHTFset$.
 
-Our definition of \acp{SASP} is restricted because our goal is to illustrate
-the core of a method to propagate probabilities from \aclp{TC} to events. Our
-programs do not feature variables, relation symbols, functors or other
-elements common in standard \ac{ASP}. Also, probability annotations are not
-associated to (general) clause heads or disjunctions. However, these last two
-restrictions do not reduce the expressive capacity of the language because,
-for the former, a clause with an annotated head can be rewritten as:% such as $ \probrule{\alpha}{p}{\beta} $
+Our definition of \acp{WASP} is restricted because our goal is to illustrate the core of a method to propagate weights from \aclp{TC} to events.
+Our programs do not feature variables, relation symbols, functors or other elements common in standard \ac{ASP}.
+Also, weight annotations are not associated to (general) clause heads or disjunctions.
+However, these last two restrictions do not reduce the expressive capacity of the language because, for the former, a clause with an annotated head can be rewritten as:
+% such as $ \weightrule{\alpha}{p}{\beta} $
 \begin{equation*}
-	\probrule{\alpha}{p}{\beta} \qquad \Longrightarrow \qquad
-	\begin{aligned}
-		\probfact{\gamma & }{p},                       %
+	\weightrule{\alpha}{w}{\beta} \qquad \Longrightarrow \qquad
+	\left\{
+		\begin{aligned}
+		\weightfact{\gamma & }{w},                       %
 		\\
 		\alpha           & \clause \beta \wedge \gamma
 	\end{aligned}
+	\right.
 \end{equation*}
 while annotated disjunctive facts
-% , such as $ \probfact{\alpha \vee \beta}{p} $,
-can be translated as follows:
+% , such as $ \weightfact{\alpha \vee \beta}{p} $, can be translated as follows:
 \begin{equation*}
-	\probfact{\alpha \vee \beta}{p} \qquad \Longrightarrow \qquad
+	\weightfact{\alpha \vee \beta}{w} \qquad \Longrightarrow \qquad
+	\left\{
 	\begin{aligned}
-		\probfact{\gamma  & }{p},           %
+		\weightfact{\gamma  & }{w},           %
 		\\
 		\alpha \vee \beta & \clause \gamma.
 	\end{aligned}
+	\right.
 \end{equation*}
 
 \paragraph{Derived Program.}
 
-The \emph{derived program} of a \ac{SASP} is obtained by replacing each
-\acl{PF} $\probfact{a}{p}$ by a disjunction $ a \disj \co{a}. $ The
-\textit{\aclp{SM}} of an \acs{SASP} program are the \aclp{SM} of its derived
-program. The set of \acp{SM} of a (derived or) \acs{SASP} program is
-denoted~$\MODELset$.
+The \emph{derived program} of a \ac{WASP} is obtained by replacing each \acl{WF} $\weightfact{a}{w}$ by a disjunction $ a \disj \co{a}. $ The \textit{\aclp{SM}} of an \acs{WASP} program are the \aclp{SM} of its derived program.
+The set of \acp{SM} of a (derived or) \acs{WASP} program $P$ is (also) denoted~$\MODELset\at{P}$ or $\MODELset$.
 
 \paragraph{Events.}
 
-An \emph{event} is a set of literals. We denote the set of events by
-$\EVENTSset$. An event $e \in \EVENTSset$ which includes a set $\set{x,
-		\co{x}} \subseteq e$ of complementary literals is said to be
-\textit{inconsistent}; otherwise it is \textit{consistent}. The set of
-consistent events is denoted by $\CONSISTset$.
+An \emph{event} of a program $P$ is a set of atoms from $P$.
+We denote the set of events by
+$\EVENTSset\at{P}$ or simply $\EVENTSset$ and.
+An event $e \in \EVENTSset$ which includes a set $\set{x,
+		\co{x}} \subseteq e$ is said to be \textit{inconsistent}; otherwise it is \textit{consistent}.
+The set of consistent events is denoted by $\CONSISTset$.
 
 %\ifExamples
-\begin{example}[Fruitful SASP]
+\begin{example}[Fruitful WASP]
 	\label{ex:fruitful}\em
 
-	Consider the following \acl{SASP}:
+	Consider the following \acl{WASP} :
 	\begin{equation}\label{eq:fruitful}
-		\begin{split}
-			\probfact{a & }{0.3},   %
+		\FRUITFUL = \left\{\begin{split}
+			\weightfact{a & }{0.3},   %
 			\\
 			b \vee c    & \clause a
 		\end{split}
+		\right.
 	\end{equation}
-	which has the set $\PROBFset = \{ a:0.3 \}$ of probabilistic
-	facts.  This program is transformed into the disjunctive logic
-	program
+	which has the set $\WEIGHTFset = \{ a:0.3 \}$ of \aclp{WF}.
+This program is transformed into the logic program
 	\begin{equation}\label{eq:derived.fruitful}
-		\begin{split}
+		\FRUITFUL' = \left\{\begin{split}
 			a \vee \co{a} & ,          %
 			\\
 			b \vee c      & \clause a,
 		\end{split}
+		\right.
 	\end{equation}
 	with the set
 	$ \MODELset = \{\, \co{a}, ab, ac\, \} $
 	of three stable models.
+
+The atoms of these programs are 
+\begin{equation}
+	\ATOMSset = \set{a, \co{a}, b, \co{b}, c, \co{c}}
+	\label{eq:atoms.fruitful}
+\end{equation}
+and the events are 
+\begin{equation}
+	\EVENTSset = \powerset{\ATOMSset}.
+	\label{eq:fruitful.events}
+\end{equation}
 \end{example}
 
-We use shorthand expressions like $ab$ to denote sets of literals such as
-$\set{a, b}$.
+\subsection*{Total Choices and their Weights}
+\label{ssec:totalchoices.weights}
 
-\paragraph{Propagation of Probabilities.}
-
-As a first step to propagate probability from \aclp{TC} to events, consider
-the program of \cref{eq:fruitful} and a possible propagation of
-$\prT:\TCHOICEset \to \intcc{0,1}$ from \aclp{TC} to the \aclp{SM},
-$\prM:\MODELset \to \intcc{0,1}$. It might seem straightforward, in
-\cref{ex:fruitful}, to assume $\prM\at{\co{a}}=0.7$ but there is no explicit
-way to assign values to $\prM\at{ab}$ and $\prM\at{ac}$. Instead, we accept
-this lack of information and introduce it as a parameter $\theta$ as in
-\begin{equation}
-	\begin{aligned}
-		\prM\at{ab} & = 0.3\, \theta,
-		\\
-		\prM\at{ac} & = 0.3\, (1 - \theta)
-	\end{aligned}\label{eq:theta.and.stablemodels}
-\end{equation}
-to express our knowledge that $ab$ and $ac$ are models related in a
-certain way and, simultaneously, our uncertainty about that relation.
-In general, it might be necessary to have several such parameters, each
-associated to a given \acl{SM} $s$ (in \cref{eq:theta.and.stablemodels}, $s = ab$ in the first line and $s = ac$ in the second line)
-and a \acl{TC} $t$ (above $t=a$), so we write
-$\theta_{s,t}$.
-Obviously, for reasonable $\theta_{s,t}$,
-the total choice $t$ must be a subset of
-the stable model $s$.
-
-A value for $\theta_{s,t}$ can't be determined just with the information
-given in the program, but might be estimated with the help of further
-information, such as empirical distributions from datasets. Further
-discussion of this is outside the scope of this paper.
-
-The method that we are proposing does not follow the framework
-of~\cite{kifer1992theory} and others, where the syntax of the program
-determines the propagation from probabilities explicitly set either in facts
-or other elements of the program. Our approach requires that we consider the
-semantics, \emph{i.e.}\ the \aclp{SM} of the program, independently of the
-syntax that provided them, and from there we propagate probabilities to the
-programs's events.
-
-\ifExamples
-	\begin{example}[No Syntax Propagation]
-		\label{example:not.syntax.propagation}
-		\em
-
-		Consider the program
-		\begin{equation*}
-			\begin{split}
-				\probfact{a & }{0.3},   %
-				\\
-				b           & \clause a
-			\end{split}
-		\end{equation*}
-
-		We don't follow the clause $b \clause a$ to attribute a probability to $b$.
-		Instead, that will result from considering how events are related with the
-		\aclp{SM} and these with the \aclp{TC}. If one follows the steps of
-		\cref{sec:propagating.probalilities} would get
-		\begin{equation*}
-			\begin{split}
-				\prE\at{a}      & = \prE\at{b} = \prE\at{ab} = 0.05,                          %
-				\\
-				\prE\at{\co{a}} & = \prE\at{\co{a} b} = \prE\at{\co{a}\co{b}} = \frac{7}{60}, %
-				\\
-				\prE\at{\set{}} & = 0.5.                                                      %
-				\\
-			\end{split}
-		\end{equation*}
-
-	\end{example}
-\fi
-
-\ifExamples
-	\begin{example}[Events of the fruitful \ac{SASP}]\label{ex:events}\em
-
-		The atoms of program \cref{eq:fruitful} are $\ATOMSset = \set{a, b, c}$ and
-		the literals are
-		\begin{equation*}
-			\LITERALSset = \set{\, \co{a}, \co{b}, \co{c}, a, b, c\, }.
-		\end{equation*}
-
-		In this case, $\EVENTSset$ has $2^6 = 64$ elements. Some, such as
-		$\set{\co{a}, a, b}$, contain an atom and its negation ($a$ and $\co{a}$ in
-		that case) and are inconsistent. The set of atoms $\ATOMSset = \set{a, b, c}$
-		above generates $37$ inconsistent events and $27$ consistent events. Notice
-		that the empty set is an event, that we denote by \emptyevent.
-
-		As above, to simplify notation we write events as $\co{a}ab$ instead of
-		$\set{\co{a}, a, b}$.
-	\end{example}
-\fi
-
-\subsection*{Total Choices and their Probability}
-\label{ssec:totalchoices.probabilities}
-
-A disjunctive head $a \disj \co{a}$ in the derived program represents a
-single \textit{choice}, either $a$ or $\co{a}$. A \textit{\acl{TC}} of the
-derived program, and of the \ac{SASP} program, is $t = \set{a' \given
-		\probfact{a}{p} \in \PROBFset}$ where each $a'$ is either $a$ or $\co{a}$. We
-denote by $\TCHOICEset$ the set of total choices of a \ac{SASP} or of its
-derived program.
+A disjunctive head $a \disj \co{a}$ in the derived program represents a single \textit{choice}, either $a$ or $\co{a}$\footnote{We use the term `choice' for historical reasons, \eg\ in \cite{cozman2020joy}, but remark that it is not related to the usual `choice' elements, atoms or rules from \cite{calimeri2020aspcore}.}.
+A \textit{\acl{TC}} of the derived program, and of the \ac{WASP} program, is $t = \set{a' \given
+ \weightfact{a}{p} \in \WEIGHTFset}$ where each $a'$ is either $a$ or $\co{a}$.
+We denote by $\TCHOICEset$ the set of total choices of a \ac{WASP} or of its derived program.
 
 \ifExamples
 	\begin{example}[\Aclp{PF} and \aclp{TC}]
@@ -455,16 +354,16 @@ derived program.
 		Consider the program $B$ defined by
 		\begin{equation*}
 			\begin{split}
-				\probfact{a & }{0.3},             %
+				\weightfact{a & }{0.3},             %
 				\\
-				\probfact{b & }{0.6},             %
+				\weightfact{b & }{0.6},             %
 				\\
 				c           & \clause a \wedge b.
 			\end{split}\label{eq:total.choices}
 		\end{equation*}
 
-		The probabilistic facts of $B$ are
-		\[ \PROBFset_{B} = \set{~\probfact{a}{0.3}, \probfact{b}{0.6}~}, \]
+		The weighted facts of $B$ are
+		\[ \WEIGHTFset_{B} = \set{~\weightfact{a}{0.3}, \weightfact{b}{0.6}~}, \]
 		and the total choices are
 		\begin{equation*}
 			\TCHOICEset_{B} = \set[2]{\:
@@ -475,71 +374,68 @@ derived program.
 		\end{equation*}
 
 		\emph{E.g.}, the total choice $\set{\co{a}, b} $ results from choosing $a' =
-			\co{a}$ from the probabilistic fact $\probfact{a}{0.3}$ and $b' = b$ from
-		$\probfact{b}{0.6}, $ while $\set{a, b} $ results from choosing $a' =
-			a$ from $\probfact{a}{0.3}$ and $b' = b$ from $\probfact{b}{0.6}$.
+			\co{a}$ from the weighted fact $\weightfact{a}{0.3}$ and $b' = b$ from
+		$\weightfact{b}{0.6}, $ while $\set{a, b} $ results from choosing $a' =
+			a$ from $\weightfact{a}{0.3}$ and $b' = b$ from $\weightfact{b}{0.6}$.
 
 	\end{example}
 \fi
 
-The \emph{probability of the \acl{TC} $t \in \TCHOICEset$} is given by the
-product
+The \emph{weight of the \acl{TC} $t \in \TCHOICEset$} is given by the product
 \begin{equation}
-	\prT\at{t} =
+	\wgtT\at{t} =
 	\prod_{\substack{
-			\probfact{a}{p}~ \in ~\PROBFset,%
+			\weightfact{a~}{~w}~ \in ~\WEIGHTFset,%
 	\\
-			a~ \in~ t}} p\ \ \times\
+			a~ \in~ t}} w\ \ \times\
 	\prod_{\substack{
-			\probfact{a}{p}~ \in ~\PROBFset,%
+			\weightfact{a~}{~w}~ \in ~\WEIGHTFset,%
 	\\
-			\co{a}~\in~ t}} \co{p}.
+			\co{a}~\in~ t}} \co{w}.
 	\label{eq:prob.total.choice}
 \end{equation}
 
-Here, $\co{p} = 1 - p$, and we use the subscript in $\prT$ to explicitly
-state that this probability distribution concerns total choices. Later, we'll
-use subscripts $\MODELset, \EVENTSset$ to deal with distributions of
-\aclp{SM} and events, $\prM, \prE$.
+Here $\co{w} = 1 - w$, and we use the subscript in $\wgtT$ to explicitly state that this function concerns total choices.
+Later, we'll use subscripts $\MODELset, \EVENTSset$ to deal with functions of \aclp{SM} and events, $\wgtM, \wgtE$.
+
+Notice that in $\weightfact{a}{w}$ we have $w\in \intcc{0,1}$ but $w$ is not interpreted as a probability but, instead, as a \emph{balance} between the \emph{choices} $a$ and $\co{a}$.
 
 \ifExamples
-	\begin{example}[Probabilities for \aclp{TC}]%
-		\label{ex:probability.total.choices}
+	\begin{example}[Weights for \aclp{TC}]%
+		\label{ex:weight.total.choices}
 		\em
 
-		Continuing with the program from \cref{ex:total.choices}, the probabilities
-		of the \aclp{TC} are:
+		Continuing with the program from \cref{ex:total.choices}, the weights of the \aclp{TC} are:
 		\begin{equation*}
 			\begin{aligned}
-				\prT\at{\set[1]{a, b}}           & = 0.3 \times 0.6           &                  & = 0.18, %
+				\wgtT\at{\set[1]{a, b}}           & = 0.3 \times 0.6           &                  & = 0.18, %
 				\\
-				\prT\at{\set[1]{a, \co{b}}}      & = 0.3 \times \co{0.6}      & = 0.3 \times 0.4 & = 0.12, %
+				\wgtT\at{\set[1]{a, \co{b}}}      & = 0.3 \times \co{0.6}      & = 0.3 \times 0.4 & = 0.12, %
 				\\
-				\prT\at{\set[1]{\co{a}, b}}      & = \co{0.3} \times 0.6      & = 0.7 \times 0.6 & = 0.42, %
+				\wgtT\at{\set[1]{\co{a}, b}}      & = \co{0.3} \times 0.6      & = 0.7 \times 0.6 & = 0.42, %
 				\\
-				\prT\at{\set[1]{\co{a}, \co{b}}} & = \co{0.3} \times \co{0.6} & = 0.7 \times 0.4 & = 0.28.
+				\wgtT\at{\set[1]{\co{a}, \co{b}}} & = \co{0.3} \times \co{0.6} & = 0.7 \times 0.4 & = 0.28.
 			\end{aligned}
 		\end{equation*}
 
-		Suppose that in this program we change the probability in $\probfact{b}{0.6}$
-		to $\probfact{b}{1.0}$. Then the \aclp{TC} are the same but the probabilities
-		become
+		Suppose that in this program we change the weight in $\weightfact{b}{0.6}$
+		to $\weightfact{b}{1.0}$.
+		Then the \aclp{TC} are the same but the weights become
 		\begin{equation*}
 			\begin{aligned}
-				\prT\at{\set[1]{a, b}}           & = 0.3 \times 1.0           &                  & = 0.3, %
+				\wgtT\at{\set[1]{a, b}}           & = 0.3 \times 1.0           &                  & = 0.3, %
 				\\
-				\prT\at{\set[1]{a, \co{b}}}      & = 0.3 \times \co{1.0}      & = 0.3 \times 0.0 & = 0.0, %
+				\wgtT\at{\set[1]{a, \co{b}}}      & = 0.3 \times \co{1.0}      & = 0.3 \times 0.0 & = 0.0, %
 				\\
-				\prT\at{\set[1]{\co{a}, b}}      & = \co{0.3} \times 1.0      & = 0.7 \times 1.0 & = 0.7, %
+				\wgtT\at{\set[1]{\co{a}, b}}      & = \co{0.3} \times 1.0      & = 0.7 \times 1.0 & = 0.7, %
 				\\
-				\prT\at{\set[1]{\co{a}, \co{b}}} & = \co{0.3} \times \co{1.0} & = 0.7 \times 0.0 & = 0.0.
+				\wgtT\at{\set[1]{\co{a}, \co{b}}} & = \co{0.3} \times \co{1.0} & = 0.7 \times 0.0 & = 0.0.
 			\end{aligned}
 		\end{equation*}
-		which, as expected from stating that $\probfact{b}{1.0}$, is like
-		having $b$ as a (deterministic) fact:
+		which, as expected from stating that $\weightfact{b}{1.0}$, is like having $b$ as a (deterministic) fact:
 		\begin{equation*}
 			\begin{split}
-				\probfact{a & }{0.3},             %
+				\weightfact{a & }{0.3},             %
 				\\
 				b           & ,                   %
 				\\
@@ -550,11 +446,8 @@ use subscripts $\MODELset, \EVENTSset$ to deal with distributions of
 		This will also be stated in \cref{prop:prob.one}, when the proper definitions
 		are set.
 	\end{example}
-\fi
-
-Some \aclp{SM} are entailed from some \aclp{TC} while other \acp{SM} are
-entailed by other \acp{TC}. We write $\tcgen{t}$ to represent the set of
-\aclp{SM} entailed by the \acl{TC} $t \in \TCHOICEset$.
+\fi Some \aclp{SM} are entailed from some \aclp{TC} while other \acp{SM} are entailed by other \acp{TC}.
+We write $\tcgen{t}$ to represent the set of \aclp{SM} entailed by the \acl{TC} $t \in \TCHOICEset$.
 
 \ifExamples
 	\begin{example}[\Aclp{SM} and \aclp{TC}]%
@@ -574,100 +467,172 @@ entailed by other \acp{TC}. We write $\tcgen{t}$ to represent the set of
 			\end{array}
 		\end{equation*}
 
-		The second case illustrates that propagating probabilities from \aclp{TC} to
+		The second case illustrates that propagating weights from \aclp{TC} to
 		\aclp{SM} entails a non-deterministic step: \textit{How to propagate the
-			probability $\prT\at{\set{a}}$ to each one of the \aclp{SM} $ab$ and $ac$?}
+			weight $\wgtT\at{\set{a}}$ to each one of the \aclp{SM} $ab$ and $ac$?}
 	\end{example}
 \fi
 
-Our goal can now be rephrased as to know how to propagate the probability
-distribution of the program's \aclp{TC}, $\prT$, in
-\cref{eq:prob.total.choice} (which is, indeed, a product of Bernoulli
-distributions \cite{Teugels90}), to a distribution of the program's events,
-$\prE$.
+Our goal can now be rephrased as to know how to propagate the weights of the program's \aclp{TC}, $\wgtT$, in \cref{eq:prob.total.choice}
+%(which is, indeed, a product of Bernoulli distributions \cite{Teugels90}), 
+to the program's events, $\wgtE$.
+
+
+
+\paragraph{Propagation of Weights.}
+
+As a first step to propagate weight from \aclp{TC} to events, consider the $\FRUITFUL$ program of \cref{eq:fruitful} and a possible propagation of $\wgtT:\TCHOICEset \to \intcc{0,1}$ from \aclp{TC} to the \aclp{SM}, $\wgtM:\MODELset \to \intcc{0,1}$.
+%
+%\sidenote{\franc{addressed} Def \TCHOICEset?}
+%
+It might seem straightforward, in \cref{ex:fruitful}, to assume $\wgtM\at{\co{a}}=0.7$ but there is no explicit way to assign values to $\wgtM\at{ab}$ and $\wgtM\at{ac}$.
+We represent this non-determinist by a parameter $\theta$ as in
+\begin{equation}
+	\begin{aligned}
+		\wgtM\at{ab} & = 0.3\, \theta,
+		\\
+		\wgtM\at{ac} & = 0.3\, (1 - \theta)
+	\end{aligned}\label{eq:theta.and.stablemodels}
+\end{equation}
+to express our knowledge that $ab$ and $ac$ are models entailed from a specific choice and, simultaneously, the inherent non-determinism of that entailment.
+In general, it might be necessary to have several such parameters, each associated to a given \acl{SM} $s$ (in \cref{eq:theta.and.stablemodels}, $s = ab$ in the first line and $s = ac$ in the second line) and a \acl{TC} $t$ (above $t=a$), so we write $\theta_{s,t}$.
+Obviously, for reasonable $\theta_{s,t}$, the total choice $t$ must be a subset of the stable model $s$.
+
+Unless we introduce some bias, such as $\theta = 0.5$ as in \lpmln\ \cite{lee2016weighted}, the value for $\theta_{s,t}$ can't be determined just with the information given in the program. But it might be estimated with the help of further information, such as empirical distributions from datasets.
+Further discussion of this is outside the scope of this paper.
+%
+
+Now consider the program
+\begin{equation}\label{eq:single}
+	\left\{\begin{split}
+		\weightfact{a & }{0.3},   %
+		\\
+		b & \clause a \wedge \naf b
+	\end{split}
+	\right.
+\end{equation}
+that has a single \ac{SM}, $\co{a}$. Since the weights are not interpreted as probabilities, there is no need to have their sum equal to $1$. So the weights in the \acp{TC} of \cref{eq:single} only set
+$$
+\wgtM\at{\co{a}} = 0.7.
+$$
+% \sidenote{Explain what appens with $a \vee \neg a, b \clause a \wedge \naf b$ that has only the stable model $\neg a$.\franc{Stress \textbf{weights} instead of probabilities.}}
+
+Also facts without annotations can be transformed to facts with weight $1$:
+\begin{equation}
+	a \qquad \Longrightarrow \qquad \weightfact{a}{1.0} \label{eq:noannotation}
+\end{equation}
+
+The method that we are proposing does not follow the framework of~\cite{kifer1992theory} and others, where the syntax of the program determines the propagation from probabilities explicitly set either in facts or other elements of the program.
+Our approach requires that we consider the semantics, \emph{i.e.}\ the \aclp{SM} of the program, independently of the syntax that provided them, and from there we propagate weights to the programs's events and then normalization provides the final probabilities.
+%
+
+\sidenote{\franc{STOPED HERE.}}
+
+\ifExamples
+	\begin{example}[No Syntax Propagation]
+		\label{example:not.syntax.propagation}
+		\em
+
+		Consider the program
+		\begin{equation*}
+			\begin{split}
+				\weightfact{a & }{0.3},   %
+				\\
+				b           & \clause a
+			\end{split}
+		\end{equation*}
+
+		We don't follow the clause $b \clause a$ to attribute a weight to $b$.
+		Instead, that will result from considering how events are related with the
+		\aclp{SM} and these with the \aclp{TC}.		
+		If one follows the steps of
+		\cref{sec:propagating.weights} would get
+		\begin{equation*}
+			\begin{split}
+				\wgtE\at{a}      & = \wgtE\at{b} = \wgtE\at{ab} = 0.05,                          %
+				\\
+				\wgtE\at{\co{a}} & = \wgtE\at{\co{a} b} = \wgtE\at{\co{a}\co{b}} = \frac{7}{60}, %
+				\\
+				\wgtE\at{\set{}} & = 0.5.                                                      %
+				\\
+			\end{split}
+		\end{equation*}
+
+	\end{example}
+\fi
+
+\ifExamples
+	\begin{example}[Events of the fruitful \ac{WASP}]\label{ex:events}\em
+
+		The atoms of program \cref{eq:fruitful} are $\ATOMSset = \set{a, b, c}$ and
+		the literals are
+		\begin{equation*}
+			\LITERALSset = \set{\, \co{a}, \co{b}, \co{c}, a, b, c\, }.
+		\end{equation*}
+
+		In this case, $\EVENTSset$ has $2^6 = 64$ elements.
+Some, such as
+		$\set{\co{a}, a, b}$, contain an atom and its negation ($a$ and $\co{a}$ in
+		that case) and are inconsistent.
+The set of atoms $\ATOMSset = \set{a, b, c}$
+		above generates $37$ inconsistent events and $27$ consistent events.
+Notice
+		that the empty set is an event, that we denote by \emptyevent.
+
+		As above, to simplify notation we write events as $\co{a}ab$ instead of
+		$\set{\co{a}, a, b}$.
+	\end{example}
+\fi
 
 \subsection*{Related Approaches and Systems}
 \label{ssec:other.approaches}
 
-The core problem of setting a semantics for probabilistic logic programs, the
-propagation of probabilities from \aclp{TC} to \aclp{SM} in the case of
-\ac{ASP} or to other types in other logic programming modes (\emph{e.g.}\ to
-possible worlds in \texttt{Problog}) has been studied for some
-time~\cite{kifer1992theory,sato1995statistical}.
+The core problem of setting a semantics for probabilistic logic programs, the propagation of probabilities from \aclp{TC} to \aclp{SM} in the case of \ac{ASP} or to other types in other logic programming modes (\eg\ to possible worlds in \texttt{Problog}) has been studied for some time~\cite{kifer1992theory,sato1995statistical}.
 
-For example, the \emph{credal set} approach of~\cite{cozman2020joy}, defines
-$\prT$ as in \cref{eq:prob.total.choice} but then, for $a \in \ATOMSset$, the
-probability $\pr{a \given t}$ is unknown but bounded by
-$\underbar{\prfunc}\at{a \given t}$ and $\overline{\prfunc}\at{a \given t}$,
-that can be explicitly estimated from the program.
+For example, the \emph{credal set} approach of~\cite{cozman2020joy}, defines $\prT$ in a way similar to \cref{eq:prob.total.choice} but then, for $a \in \ATOMSset$, the probability $\pr{a \given t}$ is unknown but bounded by $\underbar{\prfunc}\at{a \given t}$ and $\overline{\prfunc}\at{a \given t}$, that can be explicitly estimated from the program.
 
-\texttt{Problog} \cite{fierens2015inference,verreet2022inference}
-extends \texttt{Prolog} with probabilistic facts so that a program
-specifies a probability distribution over possible worlds.  A
-\textit{world} is a model of $T \cup R$ where $T$ is a total
-choice and $R$ the set of rules of a program.  The semantics is only
-defined for \textit{sound} programs~\cite{riguzzi2013well}
-\textit{i.e.}, programs for which each possible total choice $T$
-leads to a well-founded model that is two-valued or \textit{total}.
-The probability of a possible world that is a model of the program is
-the probability of the total choice.  Otherwise the probability is
-$0$~\cite{riguzzi2013well,van1991well}.
+\texttt{Problog} \cite{fierens2015inference,verreet2022inference} extends \texttt{Prolog} with probabilistic facts so that a program specifies a probability distribution over possible worlds.
+A \textit{world} is a model of $T \cup R$ where $T$ is a total choice and $R$ the set of rules of a program.
+The semantics is only defined for \textit{sound} programs~\cite{riguzzi2013well} \ie, programs for which each possible total choice $T$ leads to a well-founded model that is two-valued or \textit{total}.
+The probability of a possible world that is a model of the program is the probability of the total choice.
+Otherwise the probability is $0$~\cite{riguzzi2013well,van1991well}.
 
-Another system, based on Markov Logic~\cite{richardson2006markov}, is
-\lpmln~\cite{lee2016weighted,lee2017lpmln}, whose models result from
-\textit{weighted rules} of the form $a \clause b, n$ where $a$ is disjunction
-of atoms, $b$ is conjunction of atoms and $n$ is constructed from atoms using
-conjunction, disjunction and negation. For each model there is a unique
-maximal set of rules that are satisfied by it and the respective weights
-determine the probability of that model.
+Another system, based on Markov Logic~\cite{richardson2006markov}, is \lpmln~\cite{lee2016weighted,lee2017lpmln}, whose models result from \textit{weighted rules} of the form $a \clause b, n$ where $a$ is disjunction of atoms, $b$ is conjunction of atoms and $n$ is constructed from atoms using conjunction, disjunction and negation.
+For each model there is a unique maximal set of rules that are satisfied by it and the respective weights determine the weight of that model, that can be normalized to a probability.
 
-\subsection*{Towards Propagating Probabilities from Literals to Events.}
-\label{ssec:propagating.probabilities}
+\subsection*{Towards Propagating Weights from Literals to Events.}
+\label{ssec:propagating.weights}
 
-The program in \cref{eq:fruitful} from \cref{ex:fruitful} exemplifies the
-problem of propagating probabilities from \aclp{TC} to \aclp{SM} and then to
-events. The main issue arises from the lack of information in the program on
-how to assign a single probability to each \acl{SM}. This becomes a crucial
-problem in situations where multiple \aclp{SM} result from a single \acl{TC}.
+The program in \cref{eq:fruitful} from \cref{ex:fruitful} exemplifies the problem of propagating weights from \aclp{TC} to \aclp{SM} and then to events.
+The main issue arises from the lack of information in the program on how to assign a single weight to each \acl{SM}.
+This becomes a crucial problem in situations where multiple \aclp{SM} result from a single \acl{TC}.
 
-Our stance is that an \ac{ASP} program describes an observable system, the
-program's \aclp{SM} are the possible states of that system and that state
-observations are stochastic and detected in the form of events. Then:
+Our stance is that an \ac{ASP} program describes an observable system, the program's \aclp{SM} are the possible states of that system and that state events are stochastic and detected in the form of events.
+Then:
 \begin{enumerate}
 
-	\item With a probability set for the \aclp{SM}, we extend it to any event in\ the
-	      program domain, \textit{i.e.}\ to any set of literals present in the program.
+	\item With a weight set for the \aclp{SM}, we extend it to any event in the program domain, \ie\ to any set of literals present in the program.
 
-	\item In the case where some statistical knowledge is available, for example, in
-	      the form of a distribution relating some literals, we consider it as
-	      ``external'' knowledge about the parameters, that doesn't affect the
-	      propagation procedure described below.
+	\item In the case where some statistical knowledge is available, for example, in the form of a distribution relating some literals, we consider it as `external' knowledge about the parameters, that doesn't affect the propagation procedure described below.
 
-	\item That knowledge can be used to estimate the parameters $\theta_{s,t}$ and to
-	      ``score'' the program.
+	\item That knowledge can be used to estimate the parameters $\theta_{s,t}$ and to `score' the program.
 
-	\item\label{item:program.selection} If a program is but one of many
-	      possible candidates then that score can be used, \emph{e.g.}\ as
-	      fitness, by algorithms searching (optimal) programs of a dataset of
-	      observations.
+	\item\label{item:program.selection} If a program is but one of many possible candidates then that score can be used, \eg\ as fitness, by algorithms searching (optimal) programs of a dataset of events.
 
-	\item If observations are not consistent with the program, then we ought to
-	      conclude that the program is wrong and must be changed accordingly.
+	\item If events are not consistent with the program, then we ought to conclude that the program is wrong and must be changed accordingly.
 
 \end{enumerate}
 
-Currently, we are addressing the problem of propagating a measure (in the
-\emph{measure theory} sense), possibly using formal parameters such as
+Currently, we are addressing the problem of propagating a measure (in the \emph{measure theory} sense), possibly using formal parameters such as
 $\theta$, defined on the \aclp{SM} of a program, $\pwM: \MODELset \to
 	\mathbb{R}$, to all the events of that program: $\pwE: \EVENTSset \to
-	\mathbb{R}$. Denoting the \emph{power set} of $X$ by $\powerset{X}$, the
-latter function will then be normalized and extended into a probability
-$\prE:\powerset{\EVENTSset} \to \intcc{0,1}$. This way probabilistic
-reasoning is consistent with the \ac{ASP} program and follows our
-interpretation of \aclp{SM} as the states of an observable system.
+	\mathbb{R}$.
+Denoting the \emph{power set} of $X$ by $\powerset{X}$, the latter function will then be normalized and extended into a weight
+$\wgtE:\powerset{\EVENTSset} \to \intcc{0,1}$.
+This way probabilistic reasoning is consistent with the \ac{ASP} program and follows our interpretation of \aclp{SM} as the states of an observable system.
 
-\section{Propagating Probabilities}
-\label{sec:propagating.probalilities}
+\section{Propagating Weights}
+\label{sec:propagating.weights}
 \begin{figure}[t]
 	\begin{center}
 		\begin{tikzpicture}[node distance=2em]
@@ -714,26 +679,19 @@ interpretation of \aclp{SM} as the states of an observable system.
 	\end{center}
 
 	\caption{%
-		This (partial sub-/super-set) diagram shows some events related to
-		the \aclp{SM} of the program \cref{eq:fruitful}.  The circle nodes
-		are \aclp{TC} and shaded nodes are \aclp{SM}.  Solid lines
-		represent relations with the \aclp{SM} and dashed lines some
-		sub-/super-set relations with other events.  The set of events
-		contained in all \aclp{SM}, denoted by $\consequenceclass$, is
-		$\set{ \emptyevent }$ in this example, because
-		$\co{a} \cap ab \cap ac = \emptyset = \emptyevent$.}
+		This (partial sub-/super-set) diagram shows some events related to the \aclp{SM} of the program \cref{eq:fruitful}.
+		The circle nodes are \aclp{TC} and shaded nodes are \aclp{SM}.
+		Solid lines represent relations with the \aclp{SM} and dashed lines some sub-/super-set relations with other events.
+		The set of events contained in all \aclp{SM}, denoted by $\consequenceclass$, is
+		$\set{ \emptyevent }$ in this example, because $\co{a} \cap ab \cap ac = \emptyset = \emptyevent$.}
 	\label{fig:ex:fruitful}
 \end{figure}
 
-The diagram in \cref{fig:ex:fruitful} illustrates the problem of propagating
-probabilities from \aclp{TC} to \aclp{SM} and then to general events in an
-\emph{edge-wise} process, \emph{i.e.}~where the value in a node is defined
-from the values in its neighbors. This quickly leads to coherence problems
-concerning probability, with no clear systematic approach. For example,
-notice that $bc$ is not directly related with any \acl{SM}. Propagating
-values through edges would assign a value ($\not= 0$) to $bc$ hard to explain
-in terms of the semantics of the program. Instead, we propose to settle such
-propagation on the relation an event has with the \aclp{SM}.
+The diagram in \cref{fig:ex:fruitful} illustrates the problem of propagating weights from \aclp{TC} to \aclp{SM} and then to general events in an \emph{edge-wise} process, \ie\ where the value in a node is defined from the values in its neighbors.
+This quickly leads to coherence problems concerning weight, with no clear systematic approach.
+For example, notice that $bc$ is not directly related with any \acl{SM}.
+Propagating values through edges would assign a value ($\not= 0$) to $bc$ hard to explain in terms of the semantics of the program.
+Instead, we propose to settle such propagation on the relation an event has with the \aclp{SM}.
 
 \subsection{An Equivalence Relation}
 \label{subsec:equivalence.relation}
@@ -790,12 +748,14 @@ propagation on the relation an event has with the \aclp{SM}.
 		\end{tikzpicture}
 	\end{center}
 
-	\caption{Classes of (consistent) events related to the \aclp{SM} of
-		\cref{ex:fruitful} are defined through sub-/super-set relations.
-		In this picture we can see, for example, that
-		$\set{\co{c}ab, ab, b}$ and $\set{a, abc}$ are part of
-		different classes, represented by different fillings.  As before,
-		the circle nodes are \aclp{TC} and shaded nodes are \aclp{SM}. Notice that $bc$ is not in a filled area.}
+	\caption{%
+		Classes of (consistent) events related to the \aclp{SM} of \cref{ex:fruitful} are defined through sub-/super-set relations. 
+		%
+		In this picture we can see, for example, that $\set{\co{c}ab, ab, b}$ and $\set{a, abc}$ are part of different classes, represented by different fillings.
+		%
+		As before, the circle nodes are \aclp{TC} and shaded nodes are \aclp{SM}.
+		%
+		Notice that $bc$ is not in a filled area.}
 	\label{fig:ex:fruitful.classes}
 \end{figure}
 
@@ -829,29 +789,28 @@ propagation on the relation an event has with the \aclp{SM}.
 	\end{center}
 
 	\caption{%
-		Lattice of the \aclp{SC} from \cref{ex:fruitful}.  In this diagram
+		Lattice of the \aclp{SC} from \cref{ex:fruitful}.
+In this diagram
 		the nodes are the different \aclp{SC} that result from the
 		\aclp{SM}, plus the \emph{inconsistent} class ($\inconsistent$).
 		The bottom node ($\indepclass$) is the class of
 		\emph{independent} events, those that have no sub-/super-set
 		relation with the \acp{SM} and the top node ($\consequenceclass$)
-		represents events related with all the \acp{SM} \emph{i.e.}~the \emph{consequences} of the program.  As in previous
+		represents events related with all the \acp{SM} \emph{i.e.}~the \emph{consequences} of the program.
+As in previous
 		diagrams, shaded nodes represent the \acp{SM}.}
 	\label{fig:fruitful.lattice}
 \end{figure}
 
-Our path to propagate probabilities starts with the perspective that
-\aclp{SM} play a role similar to \emph{prime factors} or \emph{principal
-	ideals}. The \aclp{SM} of a program are the irreducible events entailed from
-that program and any event must be considered under its relation with the
-\aclp{SM}.
+Our path to propagate probabilities starts with the perspective that \aclp{SM} play a role similar to \emph{prime factors} or \emph{principal ideals}.
+The \aclp{SM} of a program are the irreducible events entailed from that program and any event must be considered under its relation with the \aclp{SM}.
 
-From \cref{ex:fruitful} and \cref{fig:ex:fruitful.classes} consider the
-\aclp{SM} $\co{a}, ab, ac$ and events $a, abc$ and $c$. While $a$ is related
-with (i.e.~contained in) both $ab, ac$, the event $c$ is related only with
-$ac$. So, $a$ and $c$ are related with different \aclp{SM}. On the other
-hand, $abc$ contains both $ab, ac$. So $a$ and $abc$ are related with the
-same \aclp{SM}.
+From \cref{ex:fruitful} and \cref{fig:ex:fruitful.classes} consider the \aclp{SM} $\co{a}, ab, ac$ and events $a, abc$ and $c$.
+While $a$ is related with (i.e.~contained in) both $ab, ac$, the event $c$ is related only with
+$ac$.
+So, $a$ and $c$ are related with different \aclp{SM}.
+On the other hand, $abc$ contains both $ab, ac$.
+So $a$ and $abc$ are related with the same \aclp{SM}.
 
 The \textit{\acf{SC}} of the event $e\in \EVENTSset$ is
 \begin{equation}
@@ -859,8 +818,7 @@ The \textit{\acf{SC}} of the event $e\in \EVENTSset$ is
 \end{equation}
 where $\MODELset$ is the set of \aclp{SM}.
 
-Observe that the minimality of \aclp{SM} implies that either $e$ is a
-\acl{SM} or at least one of $\exists s \del{s \subseteq e}, \exists s \del{e
+Observe that the minimality of \aclp{SM} implies that either $e$ is a \acl{SM} or at least one of $\exists s \del{s \subseteq e}, \exists s \del{e
 		\subseteq s}$ is false \emph{i.e.,}\ no \acl{SM} contains another.
 
 \ifExamples
@@ -888,18 +846,19 @@ Observe that the minimality of \aclp{SM} implies that either $e$ is a
 		\end{equation*}
 
 		Events $a$ and $abc$ have the same \ac{SC}, while $\co{c}ab$ has a different
-		\ac{SC}. Also, $bc$ is \emph{independent of} (\emph{i.e.}\ not related to)
-		any \acl{SM}. Since events are sets of literals, the empty set is an event
+		\ac{SC}.
+Also, $bc$ is \emph{independent of} (\emph{i.e.}\ not related to)
+		any \acl{SM}.
+Since events are sets of literals, the empty set is an event
 		and a subset of any \ac{SM}.
 	\end{example}
 \fi
 
-We now define an equivalence relation so that two events are related if
-either both are inconsistent or both are consistent and, in the latter case,
-with the same \acl{SC}.
+We now define an equivalence relation so that two events are related if either both are inconsistent or both are consistent and, in the latter case, with the same \acl{SC}.
 \begin{definition}[Equivalence Relation on Events.]\label{def:equiv.rel}
 
-	For a given program, let $u, v \in \EVENTSset$. The equivalence relation
+	For a given program, let $u, v \in \EVENTSset$.
+The equivalence relation
 	$\sim$ is defined by
 	\begin{equation}
 		u \sim v\ :\clause\ u,v \not\in\CONSISTset \vee \del{u,v \in \CONSISTset \wedge \stablecore{u} = \stablecore{v}}.\label{eq:equiv.rel}
@@ -907,9 +866,8 @@ with the same \acl{SC}.
 
 \end{definition}
 
-This equivalence relation defines a partition on the set of events, where
-each class holds a unique relation with the \aclp{SM}. In particular we
-denote each class by:
+This equivalence relation defines a partition on the set of events, where each class holds a unique relation with the \aclp{SM}.
+In particular we denote each class by:
 \begin{equation}
 	\class{e} =
 	\begin{cases}
@@ -926,33 +884,29 @@ denote each class by:
 	Let $\emptyevent$ be the event empty set (because
 	$\emptyset \in \EVENTSset$), and $\consequenceclass$ the
 	\emph{consequence class} of events related with all the
-	\aclp{SM}.  Then
+	\aclp{SM}.
+Then
 	\begin{equation}
 		\class{\emptyevent} = \stablecore{\MODELset} = \consequenceclass.
 	\end{equation}
 \end{proposition}
 
-The combinations of \aclp{SM}, \textit{i.e.}~the \aclp{SC}, together with the
-set of inconsistent events ($\inconsistent$) forms a set of representatives
-for the equivalence relation $\sim$. Since all events within an equivalence
-class have the same relation with a specific \acl{SC}, we are interested in
-functions (including probability distributions), that are constant within
-classes. A function $f:\EVENTSset\to Y$, where $Y$ is any set, is said to be
-\emph{coherent} if
+The combinations of \aclp{SM}, \ie~the \aclp{SC}, together with the set of inconsistent events ($\inconsistent$) forms a set of representatives for the equivalence relation $\sim$.
+Since all events within an equivalence class have the same relation with a specific \acl{SC}, we are interested in functions (including weight distributions), that are constant within classes.
+A function $f:\EVENTSset\to Y$, where $Y$ is any set, is said to be \emph{coherent} if
 \begin{equation}
 	\forall u\in \class{e} \left( f\at{u} = f\at{e} \right).
 \end{equation}
 
-Considering coherent functions, in the specific case of \cref{eq:fruitful},
-instead of dealing with the $2^6 = 64$ events, we need to consider only the
-$2^3 + 1 = 9$ classes, well defined in terms of combinations of the
-\aclp{SM}, to define coherent functions. In general, a program with $n$ atoms
-and $m$ \aclp{SM} has $2^{2n}$ events and $2^m + 1$ \aclp{SC}.
+Considering coherent functions, in the specific case of \cref{eq:fruitful}, instead of dealing with the $2^6 = 64$ events, we need to consider only the
+$2^3 + 1 = 9$ classes, well defined in terms of combinations of the \aclp{SM}, to define coherent functions.
+In general, a program with $n$ atoms and $m$ \aclp{SM} has $2^{2n}$ events and $2^m + 1$ \aclp{SC}.
 
 \ifExamples
 	\begin{example}[Events classes]\label{ex:classes}\em
 
-		Consider again \cref{ex:fruitful}. As previously stated, the \aclp{SM} are
+		Consider again \cref{ex:fruitful}.
+As previously stated, the \aclp{SM} are
 		the elements of $\MODELset = \set{\co{a}, ab, ac}$ so the quotient set of
 		this relation is
 		\begin{equation*}
@@ -975,7 +929,8 @@ and $m$ \aclp{SM} has $2^{2n}$ events and $2^m + 1$ \aclp{SC}.
 		where $\indepclass$ denotes the class of \emph{independent
 			events} $e$ such that $\stablecore{e} = \set{\emptyset}$,
 		while $\consequenceclass = \stablecore{\MODELset}$ is the set of
-		events related with all \acp{SM}.  We have:
+		events related with all \acp{SM}.
+We have:
 		\begin{equation*}
 			\begin{array}{l|lr}
 				\stablecore{e}
@@ -1035,21 +990,12 @@ and $m$ \aclp{SM} has $2^{2n}$ events and $2^m + 1$ \aclp{SC}.
 \subsection{From Total Choices to Events}
 \label{subsec:from.tchoices.to.events}
 
-Our path to set a distribution on $\EVENTSset$ continues with the more
-general problem of extending \emph{measures}, since propagating
-\emph{probabilities} easily follows by means of a suitable normalization
-(done in \cref{eq:measure.events.unconditional,eq:probability.event}), and
-has two phases: (1) Propagation of the probabilities, \emph{as measures},
-from the \aclp{TC} to events and (2) Normalization of the measures on events,
-recovering a probability.
+Our path to set a distribution on $\EVENTSset$ continues with the more general problem of extending \emph{measures}, since propagating \emph{probabilities} easily follows by means of a suitable normalization
+(done in \cref{eq:measure.events.unconditional,eq:weight.event}), and has two phases: (1) Propagation of the probabilities, \emph{as measures}, from the \aclp{TC} to events and (2) Normalization of the measures on events, recovering a weight.
 
-The ``propagation'' phase, traced by \cref{eq:prob.total.choice} and
-\crefrange{eq:measure.tchoice}{eq:measure.events.unconditional}, starts with
-the probability (as a measure) of \aclp{TC}, $\pwt{t} = \prT\at{t}$,
-propagates it to the \aclp{SM}, $\pwm{s}$, and then, within the equivalence
-relation from \cref{eq:equiv.rel}, to a coherent measure of events,
-$\pwe{e}$, including (consistent) worlds. So we are specifying a sequence of
-functions
+The ``propagation'' phase, traced by \cref{eq:prob.total.choice} and \crefrange{eq:measure.tchoice}{eq:measure.events.unconditional}, starts with the weight (as a measure) of \aclp{TC}, $\pwt{t} = \wgtT\at{t}$, propagates it to the \aclp{SM}, $\pwm{s}$, and then, within the equivalence relation from \cref{eq:equiv.rel}, to a coherent measure of events,
+$\pwe{e}$, including (consistent) worlds.
+So we are specifying a sequence of functions
 \begin{equation}
 	\pwT , \pwM , \pwC , \pwE\label{eq:sequence.functions}
 \end{equation}
@@ -1057,36 +1003,32 @@ on successive larger domains
 \(
 \TCHOICEset , \MODELset , \class{\EVENTSset} , \EVENTSset
 \)
-so that the last function ($\pwE$) is a finite coherent measure on
-the set of events and thus, as a final step, it can easily be used to
-define a probability distribution of events by normalization:
+so that the last function ($\pwE$) is a finite coherent measure on the set of events and thus, as a final step, it can easily be used to define a weight distribution of events by normalization:
 \(
-\pwE \longrightarrow \prE
+\pwE \longrightarrow \wgtE
 \).
 
-\subsubsection*{Total Choices and Stable models}
+\subsubsection*{\Aclp{TC} and \Aclp{SM}}
 \label{par:prop.totalchoices}
 
-Let's start by looking into the first two steps of the sequence of functions
-\cref{eq:sequence.functions}: $\pwT$ and $\pwM$. Using
-\cref{eq:prob.total.choice}, the measure $\mu_{\cal T}$ of the \acl{TC} $t
+Let's start by looking into the first two steps of the sequence of functions \cref{eq:sequence.functions}: $\pwT$ and $\pwM$.
+Using \cref{eq:prob.total.choice}, the measure $\mu_{\cal T}$ of the \acl{TC} $t
 	\in \TCHOICEset$ is given by
 \begin{equation}
-	\pwt{t} := \prT\at{t}=
+	\pwt{t} := \wgtT\at{t}=
 	\prod_{\substack{
-			\probfact{a}{p}~ \in ~\PROBFset,%
+			\weightfact{a}{p}~ \in ~\WEIGHTFset,%
 	\\
 			a~ \in~ t}} p\ \ \times\
 	\prod_{\substack{
-			\probfact{a}{p}~ \in ~\PROBFset,%
+			\weightfact{a}{p}~ \in ~\WEIGHTFset,%
 	\\
 			\co{a}~\in~ t}} \co{p}.
 	\label{eq:measure.tchoice}
 \end{equation}
 
-Recall that each \acl{TC} $t \in \TCHOICEset$, together with the rules and
-the other facts of a program, defines the set \tcgen{t} of \aclp{SM}
-associated with that choice. Given a \acl{TC} $t \in \TCHOICEset$, a \acl{SM}
+Recall that each \acl{TC} $t \in \TCHOICEset$, together with the rules and the other facts of a program, defines the set \tcgen{t} of \aclp{SM} associated with that choice.
+Given a \acl{TC} $t \in \TCHOICEset$, a \acl{SM}
 $s \in \MODELset $, and formal variables or values $\theta_{s,t} \in
 	\intcc{0, 1}$ such that $\sum_{s\in \tcgen{t}} \theta_{s,t} = 1$, we define
 \begin{equation}
@@ -1096,20 +1038,15 @@ $s \in \MODELset $, and formal variables or values $\theta_{s,t} \in
 	\label{eq:measure.stablemodel}
 \end{equation}
 
-The $\theta_{s,t}$ parameters in \cref{eq:measure.stablemodel} express the
-\emph{program's} lack of information about the measure assignment, when a
-single \acl{TC} entails more than one \acl{SM}. We propose to address this
-issue by assigning a possibly unknown parameter, \textit{i.e.}~a formal
-variable, ($\theta_{s,t}$) associated with a \acl{TC} ($t$) and a \acl{SM}
-($s$). This allows the expression of a quantity that does not result from the
-program but might be determined or estimated given more information,
-\textit{e.g.} observed data.
+The $\theta_{s,t}$ parameters in \cref{eq:measure.stablemodel} express the \emph{program's} lack of information about the measure assignment, when a single \acl{TC} entails more than one \acl{SM}.
+We propose to address this issue by assigning a possibly unknown parameter, \ie~a formal variable, ($\theta_{s,t}$) associated with a \acl{TC} ($t$) and a \acl{SM}
+($s$).
+This allows the expression of a quantity that does not result from the program but might be determined or estimated given more information, \eg\ observed data.
 
-As sets, the \aclp{SM} can have non-empty intersection. But because different
-\acp{SM} represent different states of a system, we assume that the algebra
-of the \aclp{SM} is $\sigma$-additive:
+As sets, the \aclp{SM} can have non-empty intersection.
+But because different \acp{SM} represent different states of a system, we assume that the algebra of the \aclp{SM} is $\sigma$-additive:
 
-\begin{assumption}[\Aclp{SM} as Disjoint Observations.]
+\begin{assumption}[\Aclp{SM} as Disjoint Events.]
 	\label{assumption:smodels.disjoint}%
 
 	For any set $X$ of \aclp{SM} and any \acl{TC} $t$,
@@ -1119,7 +1056,8 @@ of the \aclp{SM} is $\sigma$-additive:
 
 \end{assumption}
 
-\Cref{eq:smodels.disjoint} is the basis for \cref{eq:measure.class.consistent} and effectively extends $\pwM:\MODELset \to \mathbb{R}$ to $\pwM:\powerset{\MODELset} \to \mathbb{R}$. Notice that the pre-condition of \cref{eq:measure.stablemodel} can now be stated as $\pwM\at{\MODELset\at{t}, t} = 1$.
+\Cref{eq:smodels.disjoint} is the basis for \cref{eq:measure.class.consistent} and effectively extends $\pwM:\MODELset \to \mathbb{R}$ to $\pwM:\powerset{\MODELset} \to \mathbb{R}$.
+Notice that the pre-condition of \cref{eq:measure.stablemodel} can now be stated as $\pwM\at{\MODELset\at{t}, t} = 1$.
 
 \ifExamples
 	\begin{example}[\Aclp{SM} and parameters]
@@ -1156,19 +1094,18 @@ of the \aclp{SM} is $\sigma$-additive:
 \label{par:prop.class.cases}
 
 Consider the next function in sequence \cref{eq:sequence.functions}, $\pwC$
-on $\class{\EVENTSset}$. Each class of the equivalence relation $\sim$
+on $\class{\EVENTSset}$.
+Each class of the equivalence relation $\sim$
 (eq.~\ref{eq:equiv.rel}) is either the inconsistent class ($\inconsistent$)
 or is associated with a \acl{SC}, \textit{i.e.~}a set of \aclp{SM}.
 Therefore, $\pwC$ is defined considering the following two cases:
-\paragraph{Inconsistent class.} This class contains events that are logically
-inconsistent, thus should never be observed and thus have measure zero:
+\paragraph{Inconsistent class.} This class contains events that are logically inconsistent, thus should never be observed and thus have measure zero:
 \begin{equation}
 	\pwc{\inconsistent, t} := 0.
 	\footnote{This measure being zero is independent of the \acl{TC}.}
 	\label{eq:measure.class.inconsistent}
 \end{equation}
-\paragraph{Consistent classes.} For the propagation function to be coherent, it
-must be constant within a class and its value dependent only on the \acl{SC}:
+\paragraph{Consistent classes.} For the propagation function to be coherent, it must be constant within a class and its value dependent only on the \acl{SC}:
 \begin{subequations}
 	\begin{equation}
 		\pwc{\class{e}, t} := \pwm{\stablecore{e}, t} = \sum_{s\in\stablecore{e}}\pwm{s, t}.
@@ -1180,16 +1117,12 @@ must be constant within a class and its value dependent only on the \acl{SC}:
 		\label{eq:measure.class.unconditional}
 	\end{equation}
 \end{subequations}
-\Cref{eq:measure.class.consistent} states that the measure of a
-class $\class{e}$ is the measure of its \acl{SC}
+\Cref{eq:measure.class.consistent} states that the measure of a class $\class{e}$ is the measure of its \acl{SC}
 ($\stablecore{e}$) and \cref{eq:measure.class.unconditional}
-\emph{averages} \cref{eq:measure.class.consistent} over the
-\aclp{TC}.
+\emph{averages} \cref{eq:measure.class.consistent} over the \aclp{TC}.
 
-Notice that \cref{eq:measure.class.consistent} also applies to the
-independent class, $\indepclass$, because events in this class are not
-related with any \acl{SM}. For such an event $e$, $\stablecore{e} =
-	\emptyset$ so
+Notice that \cref{eq:measure.class.consistent} also applies to the independent class, $\indepclass$, because events in this class are not related with any \acl{SM}.
+For such an event $e$, $\stablecore{e} =  \emptyset$ so
 \begin{equation}
 	\pwc{\indepclass, t} = \sum_{s\in\emptyset}\pwm{s, t} = 0.
 	\label{eq:measure.class.independent}
@@ -1298,14 +1231,17 @@ related with any \acl{SM}. For such an event $e$, $\stablecore{e} =
 
 		Continuing \cref{ex:fruitful}, we show the propagation of $\pwT$ to $\pwM$
 		(\cref{eq:measure.tchoice}) and then to $\pwC$
-		(\cref{eq:measure.class.consistent,eq:measure.class.unconditional}). The
+		(\cref{eq:measure.class.consistent,eq:measure.class.unconditional}).
+The
 		table above resumes the calculations to compute $\pwc{\class{e}}$ for each $e
-			\in \EVENTSset$. For example, $e = abc$ the calculation of $J6 =
+			\in \EVENTSset$.
+For example, $e = abc$ the calculation of $J6 =
 			\pwc{\class{abc}}$ follows these steps:
 		\begin{enumerate}
 			\item $\stablecore{abc} = \set{ab,ac}$ --- is in line $6$ of the table.
 			\item Since $\TCHOICEset = \set{\set{a}, \set{\co{a}}}$, we need to calculate $I6 =
-				      \pwc{\class{abc}, \set{a}}$ and $H6 = \pwc{\class{abc}, \set{\co{a}}}$. By
+				      \pwc{\class{abc}, \set{a}}$ and $H6 = \pwc{\class{abc}, \set{\co{a}}}$.
+By
 			      \cref{eq:measure.class.consistent}:
 			      \begin{equation*}
 				      \begin{aligned}
@@ -1377,7 +1313,8 @@ related with any \acl{SM}. For such an event $e$, $\stablecore{e} =
 \label{par:propagation.event.cases}
 
 Each consistent event $e \in \EVENTSset$ is in the class defined by its
-\acl{SC} $\stablecore{e}$. So, denoting the number of elements in $X$ as $\#
+\acl{SC} $\stablecore{e}$.
+So, denoting the number of elements in $X$ as $\#
 	X$, we set:
 \begin{subequations}
 	\begin{equation}
@@ -1395,23 +1332,18 @@ Each consistent event $e \in \EVENTSset$ is in the class defined by its
 		\label{eq:measure.events.unconditional}
 	\end{equation}
 \end{subequations}
-In order to get a probability from \cref{eq:measure.events.unconditional}, we need a \emph{normalizing factor}:
+In order to get a weight from \cref{eq:measure.events.unconditional}, we need a \emph{normalizing factor}:
 \begin{equation}
 	Z :=
 	\sum_{e \in \EVENTSset} \pwe{e} =
 	\sum_{\class{e} \in \class{\EVENTSset}} \pwc{\class{e}},\label{eq:normalizing.factor}
 \end{equation}
-and now \cref{eq:measure.events.unconditional} provides a
-straightforward way to define the \emph{probability of a
-	single event $e \in \EVENTSset$}:
+and now \cref{eq:measure.events.unconditional} provides a straightforward way to define the \emph{probability of a single event $e \in \EVENTSset$}:
 \begin{equation}
-	\prE\at{e} := \frac{\pwe{e}}{Z}.\label{eq:probability.event}
+	\wgtE\at{e} := \frac{\pwe{e}}{Z}.\label{eq:weight.event}
 \end{equation}
 
-\Cref{eq:probability.event} defines a coherent \emph{prior}\footnote{In the Bayesian sense that future observations might update this probability.}
-probability of events and, together with external statistical
-knowledge, can be used to learn about the \emph{initial} probabilities
-of the literals, that should not (and by \cref{prop:two.distributions}
+\Cref{eq:weight.event} defines a coherent \emph{prior}\footnote{In the Bayesian sense that future observations might update this weight.} weight of events and, together with external statistical knowledge, can be used to learn about the \emph{initial} probabilities of the literals, that should not (and by \cref{prop:two.distributions}
 can't) be confused with the explicit $\pwT$ set in the program.
 
 \ifExamples
@@ -1427,7 +1359,7 @@ can't) be confused with the explicit $\pwT$ set in the program.
 				       & \hspace{1em}\pwC\hspace{1em}
 				       & \hspace{1em}\#\class{e}\hspace{1em}
 				       & \hspace{1em}\pwE\hspace{1em}
-				       & \hspace{1em}\prE\hspace{1em}
+				       & \hspace{1em}\wgtE\hspace{1em}
 				\\
 				\hline
 				%
@@ -1496,12 +1428,14 @@ can't) be confused with the explicit $\pwT$ set in the program.
 
 		From there we can follow \cref{eq:measure.events} to calculate the measure
 		$\pwe{e, t}$ of each event given $t$, by simply dividing $\pwc{\class{e}, t}$
-		by $\#\class{e}$, the total number of elements in $\class{e}$. Then we
-		marginalize $t$ in $\pwe{e, t}$ to get $\pwe{e}$. Finally, the normalization
-		factor from \cref{eq:normalizing.factor} and \cref{eq:probability.event}
-		provide a coherent \emph{prior} probability for each event.
+		by $\#\class{e}$, the total number of elements in $\class{e}$.
+Then we
+		marginalize $t$ in $\pwe{e, t}$ to get $\pwe{e}$.
+Finally, the normalization
+		factor from \cref{eq:normalizing.factor} and \cref{eq:weight.event}
+		provide a coherent \emph{prior} weight for each event.
 
-		In summary, the coherent \emph{prior} probability of events of program
+		In summary, the coherent \emph{prior} weight of events of program
 		\cref{eq:fruitful} is
 		\begin{equation}
 			\begin{array}{l|ccccccccc}
@@ -1516,7 +1450,7 @@ can't) be confused with the explicit $\pwT$ set in the program.
 				ab, ac                  &
 				\consequenceclass
 				\\ \hline
-				\prE\at{e}              &
+				\wgtE\at{e}              &
 				0                       &
 				0                       &
 				\frac{7}{207}           &
@@ -1533,77 +1467,74 @@ can't) be confused with the explicit $\pwT$ set in the program.
 	\end{example}
 \fi
 
-Now $\prE:\EVENTSset \to \intcc{0,1}$ can be extended to
-$\prE:\powerset{\EVENTSset}\to\intcc{0,1}$ by abusing notation and setting,
-for $X \subseteq \EVENTSset$,
+Now $\wgtE:\EVENTSset \to \intcc{0,1}$ can be extended to
+$\wgtE:\powerset{\EVENTSset}\to\intcc{0,1}$ by abusing notation and setting, for $X \subseteq \EVENTSset$,
 \begin{equation}
-	\prE\at{X} = \sum_{x\in X}\prE\at{x}.
+	\wgtE\at{X} = \sum_{x\in X}\wgtE\at{x}.
 	\label{eq:prob.event.set}
 \end{equation}
-It is straightforward to verify that the latter satisfies the Kolmogorov
-axioms of probability.
+It is straightforward to verify that the latter satisfies the Kolmogorov axioms of weight.
 
 We can now properly state the following property about \emph{certain facts}
-such as $\probfact{a}{1.0}$.
+such as $\weightfact{a}{1.0}$.
 \begin{proposition}[Probability of Certain Facts.]
 	\label{prop:prob.one}
 
-	Consider a program $A$ with the probabilistic fact $\probfact{a}{1.0}$ and
-	$A'$ where it is replaced by the deterministic fact $a$. Let $\prE$ be as
-	\cref{eq:probability.event} for $A$ and $\prfunc'_{\EVENTSset}$ for $A'$.
+	Consider a program $A$ with the probabilistic fact $\weightfact{a}{1.0}$ and
+	$A'$ where it is replaced by the deterministic fact $a$.
+Let $\wgtE$ be as
+	\cref{eq:weight.event} for $A$ and $\wgtfunc'_{\EVENTSset}$ for $A'$.
 	Then
 	\begin{equation}
-		\forall e \in \EVENTSset \left(\prE\at{e} = \prfunc'_{\EVENTSset}\at{e}\right).
+		\forall e \in \EVENTSset \left(\wgtE\at{e} = \wgtfunc'_{\EVENTSset}\at{e}\right).
 	\end{equation}
 \end{proposition}
 
-Since \aclp{TC} are also events, one can ask, for an arbitrary \acl{TC} $t$,
-if $\prT\at{t} = \prE\at{t}$ or, equivalently, if $\pwt{t} = \pwe{t}$.
-However, it is easy to see that, in general, this cannot be true. While the
-domain of $\prT$ is the set of \aclp{TC}, for $\prE$ the domain is much
-larger, including all the events. Except for trivial programs, where the
-\acp{SM} are the \acp{TC}, some events other than \aclp{TC} will have
-non-zero probability.
+Since \aclp{TC} are also events, one can ask, for an arbitrary \acl{TC} $t$, if $\wgtT\at{t} = \wgtE\at{t}$ or, equivalently, if $\pwt{t} = \pwe{t}$.
+However, it is easy to see that, in general, this cannot be true.
+While the domain of $\wgtT$ is the set of \aclp{TC}, for $\wgtE$ the domain is much larger, including all the events.
+Except for trivial programs, where the
+\acp{SM} are the \acp{TC}, some events other than \aclp{TC} will have non-zero weight.
 \begin{proposition} \label{prop:two.distributions} %
 
 	If a program has a \acl{SM} that is not a \acl{TC} then there is at least one
 	$t\in\TCHOICEset$ such that
 	\begin{equation}
-		\prT\at{t} \not= \prE\at{t}. \label{eq:two.distributions}
+		\wgtT\at{t} \not= \wgtE\at{t}. \label{eq:two.distributions}
 	\end{equation}
 
 \end{proposition}
 \begin{proof}
-	Suppose towards a contradiction that $\prT\at{t} = \prE\at{t}$ for
-	all $t \in \TCHOICEset$.  Then
+	Suppose towards a contradiction that $\wgtT\at{t} = \wgtE\at{t}$ for
+	all $t \in \TCHOICEset$.
+Then
 	\begin{equation*}
-		\sum_{t\in\TCHOICEset} \prE\at{t} = \sum_{t\in\TCHOICEset} \prT\at{t} = 1.
+		\sum_{t\in\TCHOICEset} \wgtE\at{t} = \sum_{t\in\TCHOICEset} \wgtT\at{t} = 1.
 	\end{equation*}
 
-	Hence $\prE\at{x} = 0$ for all $x \in \EVENTSset\setminus\TCHOICEset$, in
+	Hence $\wgtE\at{x} = 0$ for all $x \in \EVENTSset\setminus\TCHOICEset$, in
 	contradiction with the fact that at least for one $s \in
-		\MODELset\setminus\TCHOICEset$ it must be $\prE\at{s} > 0$.
+		\MODELset\setminus\TCHOICEset$ it must be $\wgtE\at{s} > 0$.
 \end{proof}
 
 The essential, \emph{counter-intuitive}, conclusion of
 \cref{prop:two.distributions} is that we are dealing with \emph{two
-	distributions}: one, restricted to the \aclp{TC}, is explicit in the
-annotations of the programs while the other, covering all the events, results
-from the explicit annotations of the program \emph{and the structure of the
-	\aclp{SM}}. For example:
+	distributions}: one, restricted to the \aclp{TC}, is explicit in the annotations of the programs while the other, covering all the events, results from the explicit annotations of the program \emph{and the structure of the
+	\aclp{SM}}.
+For example:
 \begin{equation*}
 	\begin{aligned}
-		\prT\at{a} & = 0.3          &  &
+		\wgtT\at{a} & = 0.3          &  &
 		\text{from the program \cref{ex:fruitful}}, %
 		\\
-		\prE\at{a} & = \frac{3}{64} &  &
+		\wgtE\at{a} & = \frac{3}{64} &  &
 		\text{from \cref{eq:sbf.prior}}.
 	\end{aligned}
 \end{equation*}
 \begin{example}[Probability of Events]
 	\label{ex:prob.events}
 	\em
-	In summary, for \cref{ex:fruitful}, the coherent \emph{prior} probability of
+	In summary, for \cref{ex:fruitful}, the coherent \emph{prior} weight of
 	events of program \cref{eq:fruitful} is
 	\begin{equation}
 		\begin{array}{l|ccccccccc}
@@ -1618,7 +1549,7 @@ from the explicit annotations of the program \emph{and the structure of the
 			ab, ac                  &
 			\consequenceclass
 			\\ \hline
-			\prE\at{e}              &
+			\wgtE\at{e}              &
 			0                       &
 			0                       &
 			\frac{7}{207}           &
@@ -1632,28 +1563,34 @@ from the explicit annotations of the program \emph{and the structure of the
 		\label{eq:sbf.prior}
 	\end{equation}
 
-	We can use this table to compute the probability of any single event $e \in
-		\EVENTSset$ by looking at the column of the event's \acl{SC}. For example:
+	We can use this table to compute the weight of any single event $e \in
+		\EVENTSset$ by looking at the column of the event's \acl{SC}.
+For example:
 	\begin{description}
-		\item $\prE\at{ab} = \frac{\theta}{23}, $ because $ab$ is the only \ac{SM} related with $ab$ so $\stablecore{ab} = \set{ab}$ and the probability value is found in the respective column of \cref{eq:sbf.prior}.
+		\item $\wgtE\at{ab} = \frac{\theta}{23}, $ because $ab$ is the only \ac{SM} related with $ab$ so $\stablecore{ab} = \set{ab}$ and the weight value is found in the respective column of \cref{eq:sbf.prior}.
 
-		\item $\prE\at{abc} = \frac{3}{46}$ because $abc \supset  ab$ and $abc \supset ac$. So $\stablecore{abc} = \set{ab, ac}$.
+		\item $\wgtE\at{abc} = \frac{3}{46}$ because $abc \supset  ab$ and $abc \supset ac$.
+So $\stablecore{abc} = \set{ab, ac}$.
 
-		\item $\prE\at{bc} = 0$ because, since there is no \ac{SM} $s$ that either $s \subset bc$ or $bc \subset s$, $\stablecore{bc} = \emptyset$ \emph{i.e.}\ $bc \in \indepclass$.
+		\item $\wgtE\at{bc} = 0$ because, since there is no \ac{SM} $s$ that either $s \subset bc$ or $bc \subset s$, $\stablecore{bc} = \emptyset$ \emph{i.e.}\ $bc \in \indepclass$.
 
-		\item $\prE\at{\co{a}b} = \frac{7}{207}$ because $\stablecore{\co{a}b} = \set{\co{a}}$.
+		\item $\wgtE\at{\co{a}b} = \frac{7}{207}$ because $\stablecore{\co{a}b} = \set{\co{a}}$.
 
-		\item $\prE\at{\co{a}} = \frac{7}{207}$ and  $\prE\at{a} = \frac{3}{46}$. Notice that
-		      $ \prE\at{\co{a}} + \prE\at{a} \not= 1. $
-		      This highlights the fundamental difference between $\prE$ and $\prT$ (\emph{cf.~}\cref{prop:two.distributions}), where the former results from the lattice of the \aclp{SC} and the latter directly from the explicit assignment of probabilities to literals.
+		\item $\wgtE\at{\co{a}} = \frac{7}{207}$ and  $\wgtE\at{a} = \frac{3}{46}$.
+Notice that
+		      $ \wgtE\at{\co{a}} + \wgtE\at{a} \not= 1. $
+		      This highlights the fundamental difference between $\wgtE$ and $\wgtT$ (\emph{cf.~}\cref{prop:two.distributions}), where the former results from the lattice of the \aclp{SC} and the latter directly from the explicit assignment of probabilities to literals.
 	\end{description}
 
 	Related with the last case above, consider the complement of a consistent
-	event $e$, denoted by $\complement e$. To calculate $\prE\at{\complement e}$
-	we look for the classes in $\class{\EVENTSset}$ that are not $\class{e}$, \textit{i.e.}~the complement of $e$'s class within
+	event $e$, denoted by $\complement e$.
+To calculate $\wgtE\at{\complement e}$
+	we look for the classes in $\class{\EVENTSset}$ that are not $\class{e}$, \ie~the complement of $e$'s class within
 	$\class{\EVENTSset}$\footnote{All the usual set operations hold on the
-		complement. For example, $\complement\complement X = X$.},
-	$\complement\class{e}$. Considering that $\class{\EVENTSset}$ is in a
+		complement.
+For example, $\complement\complement X = X$.},
+	$\complement\class{e}$.
+Considering that $\class{\EVENTSset}$ is in a
 	one-to-one correspondence with the \aclp{SC} plus $\inconsistent$, 
 	\begin{equation*}
 		\class{\EVENTSset} \simeq \set{
@@ -1661,20 +1598,19 @@ from the explicit annotations of the program \emph{and the structure of the
 			, \set{ab}, \set{ac}, \set{\co{a}, ab}
 			, \set{\co{a}, ac}, \set{ab, ac}, \consequenceclass}.
 	\end{equation*}
-	In particular for $\prE\at{\complement a}$, since $\stablecore{a} = \set{ab, ac}$ then $\complement \class{a} = \class{\EVENTSset} \setminus \class{a}$ and
+	In particular for $\wgtE\at{\complement a}$, since $\stablecore{a} = \set{ab, ac}$ then $\complement \class{a} = \class{\EVENTSset} \setminus \class{a}$ and
 	\(
-	\prE\at{\complement a} =  \prE\at{\class{\EVENTSset} \setminus \class{a}} = 1 - \prE\at{a}
+	\wgtE\at{\complement a} =  \wgtE\at{\class{\EVENTSset} \setminus \class{a}} = 1 - \wgtE\at{a}
 	\).
-	Also, $\prE\at{\complement \co{a}} =  1 - \prE\at{\co{a}} $.
+	Also, $\wgtE\at{\complement \co{a}} =  1 - \wgtE\at{\co{a}} $.
 \end{example}
 
-While not illustrated in our examples, this method also applies to programs
-that have more than one \acl{PF}, like
+While not illustrated in our examples, this method also applies to programs that have more than one \acl{PF}, like
 \begin{equation*}
 	\begin{aligned}
-		\probfact{a & }{0.3},             %
+		\weightfact{a & }{0.3},             %
 		\\
-		\probfact{b & }{0.6},             %
+		\weightfact{b & }{0.6},             %
 		\\
 		c \vee d    & \clause a \wedge b.
 	\end{aligned}
@@ -1682,51 +1618,36 @@ that have more than one \acl{PF}, like
 
 Our approach generalizes to Bayesian networks in a way similar to
 \cite{cozman2020joy,raedt2016statistical} and
-\cite{kiessling1992database,thone1997increased} as follows. On the one hand,
-any acyclic propositional program can be viewed as the specification of a
-Bayesian network over binary random variables. So, we may take the structure
-of the Bayesian network to be the dependency graph. The random variables then
-correspond to the atoms and the probabilities can be read off of the
-probabilistic facts and rules. Conversely, any Bayesian network over binary
-variables can be specified by an acyclic non-disjunctive \ac{SASP}.
+\cite{kiessling1992database,thone1997increased} as follows.
+On the one hand, any acyclic propositional program can be viewed as the specification of a Bayesian network over binary random variables.
+So, we may take the structure of the Bayesian network to be the dependency graph.
+The random variables then correspond to the atoms and the probabilities can be read off of the probabilistic facts and rules.
+Conversely, any Bayesian network over binary variables can be specified by an acyclic non-disjunctive \ac{WASP}.
 
 \section{Discussion and Future Work}
 \label{sec:discussion}
 
-This work is a first venture into expressing probability distributions using
-algebraic expressions derived from a logical program, in particular an
-\ac{ASP}. We would like to point out that there is still much to explore
-concerning the full expressive power of logic programs and \ac{ASP} programs.
-So far, we have not considered recursion, logical variables or functional
-symbols. Also, there is still little effort to articulate with the related
-fields of probabilistic logical programming, machine learning, inductive
-programming, \emph{etc.}
+This work is a first venture into expressing weight distributions using algebraic expressions derived from a logical program, in particular an
+\ac{ASP}.
+We would like to point out that there is still much to explore concerning the full expressive power of logic programs and \ac{ASP} programs.
+So far, we have not considered recursion, logical variables or functional symbols.
+Also, there is still little effort to articulate with the related fields of probabilistic logical programming, machine learning, inductive programming, \emph{etc.}
 
-The equivalence relation from \cref{def:equiv.rel} identifies the $s
-	\subseteq e$ and $e \subseteq s$ cases. Relations that distinguish such cases
-might enable better relations between the models and processes from the
-\aclp{SM}.
+The equivalence relation from \cref{def:equiv.rel} identifies the $s \subseteq e$ and $e \subseteq s$ cases.
+Relations that distinguish such cases might enable better relations between the representations and processes from the \aclp{SM}.
 
-The theory, methodology, and tools, from Bayesian Networks can be adapted to
-our approach. The connection with Markov Fields \cite{kindermann80} is left
-for future work. An example of a ``program selection'' application (as
-mentioned in \cref{item:program.selection},
-\cref{ssec:propagating.probabilities}) is also left for future work.
+The theory, methodology, and tools, from Bayesian Networks can be adapted to our approach.
+The connection with Markov Fields \cite{kindermann80} is left for future work.
+An example of a ``program selection'' application (as mentioned in \cref{item:program.selection}, \cref{ssec:propagating.weights}) is also left for future work.
 
-We decided to set the measure of inconsistent events to $0$ but, maybe, in
-some cases, we shouldn't. For example, since observations may be affected by
-noise, one can expect inconsistencies between the literals of an observation
-to occur.
+We decided to set the measure of inconsistent events to $0$ but, maybe, in some cases, we shouldn't.
+For example, since observations may be affected by noise, one can expect inconsistencies between the literals of an event to occur.
 
 \section*{Acknowledgements}
 
-This work is partly supported by Funda\c{c}\~ao para a Ci\^{e}ncia e
-Tecnologia (FCT/IP) under contracts UIDB/04516/2020 (NOVA LINCS),
-UIDP/04674/2020 and UIDB/04675/2020 (CIMA).
+This work is partly supported by Funda\c{c}\~ao para a Ci\^{e}ncia e Tecnologia (FCT/IP) under contracts UIDB/04516/2020 (NOVA LINCS), UIDP/04674/2020 and UIDB/04675/2020 (CIMA).
 
-The authors are grateful to Lígia Henriques-Rodrigues, Matthias Knorr and
-Ricardo Gonçalves for valuable comments on a preliminary version of this
-paper, and Alice Martins for contributions on software development.
+The authors are grateful to Lígia Henriques-Rodrigues, Matthias Knorr and Ricardo Gonçalves for valuable comments on a preliminary version of this paper, and Alice Martins for contributions on software development.
 
 \ifLNCS \bibliographystyle{splncs04} \fi
 \ifTLP%
