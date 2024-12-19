@@ -40,10 +40,13 @@
     urlcolor=blue, }
 %
 \usepackage{commath}
+
+%\usepackage{ntheorem}
+%\newtheorem{assumption}{Assumption}
 \newtheorem{assumption}{Assumption}
 \usepackage{amssymb}
 \usepackage[normalem]{ulem}
-\usepackage[euler-digits,euler-hat-accent]{eulervm}
+% \usepackage[euler-digits,euler-hat-accent]{eulervm}
 \usepackage[nice]{nicefrac}
 \usepackage{stmaryrd}
 \usepackage[smaller]{acronym}
@@ -52,12 +55,11 @@
 \usepackage{cleveref}
 \crefname{example}{ex.}{exs.}
 \crefname{proposition}{prop.}{props.}
-\crefname{assumption}{asp.}{asps.}
+\crefname{assumption}{assumption}{assumptions}
 \usepackage{hyphenat}
 \hyphenation{
 mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 }
-
 % Environments
 
 \newtheorem{example}{Example}
@@ -79,7 +81,7 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 %
 %   special sets
 %
-\newcommand{\cla}[1]{\ensuremath{{\cal #1}}}        %   class of something  
+\newcommand{\cla}[1]{\ensuremath{{\mathcal{#1}}}}        %   class of something  
 \newcommand{\clx}[1]{\ensuremath{{\mathbb{#1}}}}
 %
 %   connectives in logic programs
@@ -89,7 +91,7 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \DeclareMathOperator{\naf}{\sim\!}
 % \newcommand{\naf}{\ensuremath{\sim\!\!}}
 \newcommand{\co}[1]{\ensuremath{\overline{#1}}}     %   complement
-\renewcommand{\complement}{\ensuremath{\mathcal{C}}}     %   complement
+%\renewcommand{\complement}{\ensuremath{\complement \complement}}     %   complement
 %
 %   often used sets
 %
@@ -107,7 +109,7 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\EVENTSset}{\ensuremath{\cla{E}}}
 \newcommand{\CONSISTset}{\ensuremath{\cla{C}}}
 % \newcommand{\FRUITFUL}{\ensuremath{P_{\mathrm{fuitful}}}}
-\newcommand{\FRUITFUL}{\ensuremath{P_{\mathrm{fr}}}}
+\newcommand{\SBF}{\ensuremath{P_{\sbf}}}
 %
 %   often used functions
 %
@@ -134,7 +136,11 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\wgtT}{\wgtd{\TCHOICEset}}
 \newcommand{\wgtM}{\wgtd{\MODELset}}
 \newcommand{\wgtE}{\wgtd{\EVENTSset}}
-\newcommand{\wgtC}{\wgtd{\cla{C}}}
+\newcommand{\wgtC}{\wgtd{\cla{R}}}
+\newcommand{\wgte}[1]{\ensuremath{\wgtE\at{#1}}}
+\newcommand{\wgtm}[1]{\ensuremath{\wgtM\at{#1}}}
+\newcommand{\wgtt}[1]{\ensuremath{\wgtT\at{#1}}}
+\newcommand{\wgtc}[1]{\ensuremath{\wgtC\at{#1}}}
 %
 %   local notation
 %
@@ -166,14 +172,15 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\indepclass}{\ensuremath{\Diamond}}
 \newcommand{\probfact}[2]{\ensuremath{#1:#2}}
 \newcommand{\probrule}[3]{\probfact{#1}{#2} \leftarrow #3}
-\newcommand{\weightfact}[2]{\ensuremath{#1\!:\!#2}}
+\newcommand{\weightfact}[2]{\ensuremath{#1:#2}}
 \newcommand{\weightrule}[3]{\weightfact{#1}{#2} \leftarrow #3}
 \newcommand{\class}[1]{\ensuremath{[{#1}]_{\sim}}}
 \newcommand{\tcgen}[1]{\MODELset\at{#1}}
 \newcommand{\condsymb}[2]{\ensuremath{p_{#1|#2}}}
 \newcommand{\lpmln}{\texttt{LP\textsuperscript{MLN}}}
 \newcommand{\emptyevent}{\ensuremath{\lambda}}
-\newcommand{\powerset}[1]{\ensuremath{\mathbb{P}\at{#1}}}
+% \newcommand{\powerset}[1]{\ensuremath{\mathbb{P}\at{#1}}}
+\newcommand{\powerset}[1]{\ensuremath{\mathrm{2}^{#1}}}
 %
 %   Acronyms
 %
@@ -197,11 +204,14 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \acrodef{SASP}[SASP]{stochastic answer set program}
 \acrodef{WASP}[WASP]{weighted answer set program}
 \acrodef{HMM}[HMM]{hidden Markov model}
-\acrodef{MAP}[MAP]{Maximum A Posteriori}
+\acrodef{MAP}[MAP]{maximum a posteriori}
+\acrodef{MLE}[MLE]{maximum likelihood estimation}
+\acrodef{BI}[BI]{Bayesian inference}
+\acrodef{PLP}[PLP]{probabilistic logic programming}
 %
 %   Common objects
 %
-\newcommand{\sbf}{\ensuremath{\mathrm{sbf}}}
+\newcommand{\sbf}{\ensuremath{\mathrm{1}}}
 %
 %   Reviewing
 %
@@ -209,6 +219,8 @@ mo-dels mi-ti-ga-ted mi-ni-mal ex-am-ple spe-ci-fi-ca-tion
 \newcommand{\LOOK}{\ensuremath{\blacksquare}}
 \newcommand{\delete}[1]{\sout{#1}}
 \newcommand{\sidenote}[1]{\stepcounter{revcounter}{\color{red!50!black}\(\vert^{\arabic{revcounter}}\)}\marginpar{{\color{red!50!black}\(^{\arabic{revcounter}}\vert\)}\scriptsize #1}}
+\newcommand{\defnote}[1]{\marginpar{\scriptsize{{\color{blue!50!black}\bf def.~}#1}}}
+\newcommand{\topicnote}[1]{{\scriptsize\color{red!50!black}$\blacktriangleright$}\marginpar{\scriptsize{\color{red!50!black}\it #1}}}
 \newcommand{\replace}[2]{\delete{#1}\sidenote{#2}}
 \newcommand{\franc}[1]{{\color{green!30!black}#1}}
 \newcommand{\bruno}{\color{red!60!black}}

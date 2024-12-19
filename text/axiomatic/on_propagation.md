@@ -1,4 +1,4 @@
-# A Logical Framework for Propagation in Stable Models
+# On the Propagation of Weights from Facts to Events
 
 - language for "events"  - _modal_ logic &rarr; assigned to bruno
 - axioms for "**stable** models" &rarr; assigned to franc
